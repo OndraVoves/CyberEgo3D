@@ -23,14 +23,8 @@ local function main()
 	ent2:setAttr( "A1", {0.0, 0.0, 0.0} )
 	ent2:setAttr( "A2", {0.0, 0.0, 1.0} )
 
-	print( ent1.name )
+	print( ent1:toJson() )
 	print( ent2.name )
-
-	local json = require( "json" )
-	local e = json.encode
-	
-	print( e( ent1:getDataTbl() ) )
-	print( e( ent2:getDataTbl() ) )	
 end
 
 main()

@@ -17,7 +17,7 @@ local function new( obj )
 		end
 	end
 	
-	function cls:getDataTbl()
+	function cls:toJson()
 		local r = { name=self.name or "EmptyName",
 				    world_id=self.world_id or -1,
 				    attr=self.attr or {},
@@ -28,7 +28,9 @@ local function new( obj )
 			r.components[#r.components+1] = v.types
 		end
 		
-		return r
+		local json = require( "json" )
+		local e = json.encode
+		return e(r)
 	end	
 	
 	local mt = { __index=cls }
