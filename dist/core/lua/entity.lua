@@ -4,6 +4,12 @@ local function new( obj )
 				  attr=obj.attr or {},
 				  components=obj.components or {},
 	}
+
+	function cls:initAttr( name, default_value )
+		if not self.attr.name then
+			self:setAttr( name, default_value )
+		end 
+	end
 	
 	function cls:setAttr( name, value )
 		local old = self.attr[name]
@@ -11,19 +17,20 @@ local function new( obj )
 		
 		--TODO: Notify component
 		for k,v in pairs(self.components) do
-			if v['onAttrChange' ] then
+			if v.onAttrChange ~= nil then
 				v:onAttrChange( name, old, value )
 			end
 		end
 	end
 	
-	function cls:toJson()
+	function cls:toJSON()
 		local r = { name=self.name or "EmptyName",
 				    world_id=self.world_id or -1,
 				    attr=self.attr or {},
 				    components={}			
 		}
 		
+		-- save only component types
 		for k,v in pairs(self.components) do
 			r.components[#r.components+1] = v.types
 		end

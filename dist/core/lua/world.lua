@@ -19,11 +19,10 @@ local function new()
 		self.entities[count] = entity
 		
 		for k,v in pairs(entity.components) do
-			if v['onEntityChange' ] then
+			if v.onEntityChange ~= nil then
 				v:onEntityChange( entity )
 			end
 		end	
-		
 		
 		return entity
 	end

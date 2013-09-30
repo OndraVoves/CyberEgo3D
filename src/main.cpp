@@ -59,7 +59,7 @@ namespace Lua {
         protected:
             virtual void initState( ) {
                 luaL_openlibs( this->pState );
-                addPackagePath( "./core/lua/?.lua" );
+                addPackagePath( "./core/lua/?.lua;./core/components/?.lua" );
             }
 
             void addPackagePath( const char* path ) {
