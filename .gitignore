@@ -1,0 +1,11 @@
+build/
+doc/doxygen/html
+a.out
+*.*swp
+*.bin
+*.kdev4
+*~
+ce3d
+*.log
+*.out*
+.buildpath
