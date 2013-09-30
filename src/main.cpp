@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <string>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -10,9 +12,6 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
-
-#include <string>
-
 namespace CE3D {
 namespace Lua {
     class LuaState {
@@ -64,13 +63,12 @@ namespace Lua {
             }
 
             void addPackagePath( const char* path ) {
-                // TODO: upravit
+                // TODO: prasarna
                 std::string cmd = "package.path = package.path .. \";";
                 cmd.append( path );
                 cmd.append( "\"" );
 
-                luaL_dostring( this->pState,
-                                cmd.c_str() );
+                luaL_dostring( this->pState, cmd.c_str() );
             }
 
         private:
