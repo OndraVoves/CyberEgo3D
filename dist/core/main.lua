@@ -35,5 +35,34 @@ local function main()
 	
 end
 
+function clientTick( dt )
+	print("client:", dt)
+end
+
+function serverTick( dt )
+	--print("server:", dt)
+end
+
+function keyPressed()
+	print("keyPressed")
+end
+
+function keyReleased()
+	print("keyReleased")
+end
+
+function mouseMoved()
+	print("moveMoved")
+end
+
+function mousePressed()
+	print("movePressed")
+end
+
+function mouseReleased()
+	print("moveReleased")
+end
+
+
 main()
 

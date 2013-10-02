@@ -36,20 +36,30 @@ ENDIF( APP_DEBUG )
 #########################
 # Find and set library. #
 #########################
+find_package(Ogre REQUIRED)
+find_package(OIS  REQUIRED)
 find_package(Lua51  REQUIRED)
 
 SET( LIBS
     ${LUA_LIBRARIES}
+    ${OIS_LIBRARIES}
+    ${OGRE_LIBRARIES}
+    OgreOverlay
 )
 
 include_directories(
     ${LUA_INCLUDE_DIR}
+    ${OIS_INCLUDE_DIR}
+    ${OGRE_INCLUDE_DIR}
 )
+
 
 ####################
 # Set sourcefiles. #
 ####################
 SET( CE3D_SRC
+    src/lua/luastate.cpp
+    src/kernel.cpp
 )
 
 SET( CE3D_MAIN_SRC
