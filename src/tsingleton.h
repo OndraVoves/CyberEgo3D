@@ -1,5 +1,5 @@
 /*
-    Copyright (c) 2013, <copyright holder> <email>
+    Copyright (c) 2013, Ondra Voves o.voves@gmail.com
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -13,10 +13,10 @@
         names of its contributors may be used to endorse or promote products
         derived from this software without specific prior written permission.
 
-    THIS SOFTWARE IS PROVIDED BY <copyright holder> <email> ''AS IS'' AND ANY
+    THIS SOFTWARE IS PROVIDED BY Ondra Voves o.voves@gmail.com ''AS IS'' AND ANY
     EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
     WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-    DISCLAIMED. IN NO EVENT SHALL <copyright holder> <email> BE LIABLE FOR ANY
+    DISCLAIMED. IN NO EVENT SHALL Ondra Voves o.voves@gmail.com BE LIABLE FOR ANY
     DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
     (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
     LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
@@ -26,60 +26,50 @@
 */
 
 
-#ifndef LUASTATE_H
-#define LUASTATE_H
-
-#include <string>
-
-#ifdef __cplusplus
-extern "C" {
-    #endif
-    #include "lua.h"
-    #include "lauxlib.h"
-    #include "lualib.h"
-    #ifdef __cplusplus
-}
-#endif
+#ifndef CE3D_TSINGLETON_H
+#define CE3D_TSINGLETON_H
 
 namespace CE3D {
-    namespace Lua {
-        class LuaLib {
-            public:
-                virtual luaL_reg* getLuaReg() = 0;
-                virtual const char* getName() = 0;
-        };
-
-        class LuaState {
+    template<typename T>
+    class TSingleton {
         public:
-            LuaState() : pState(nullptr) {
-            }
+            TSingleton();
+            virtual ~TSingleton();
 
-            virtual ~LuaState() {
-                close();
-            }
-
-            inline bool isOpen() { return (pState != nullptr); }
-            inline bool isClose() { return !isOpen(); }
-
-            bool open();
-            void close();
-            bool doFile( const char* filename );
-            void addPackagePath( const char* path );
-
-            void callGlobal( const char* name );
-            void callGlobal( const char* name, float value );
-
-            void registerLib( LuaLib *lib );
-
-        protected:
-            virtual void initState();
+            static T &inst();
+            static T *instPtr();
 
         private:
-            lua_State *pState;
-            std::string LastError;
-        };
+            TSingleton ( const TSingleton<T> &other );
+            TSingleton<T> operator= ( const TSingleton<T> &other );
+
+        protected:
+            static T *Instance;
+    };
+
+    template<typename T>
+    T *TSingleton<T>::Instance = nullptr;
+
+    template<typename T>
+    TSingleton<T>::TSingleton() {
+        Instance = static_cast<T *> ( this );
     }
+
+    template<typename T>
+    TSingleton<T>::~TSingleton() {
+        Instance = nullptr;
+    }
+
+    template<typename T>
+    T &TSingleton<T>::inst() {
+        return ( *Instance );
+    }
+
+    template<typename T>
+    T *TSingleton<T>::instPtr() {
+        return ( Instance );
+    }
+
 }
 
-
-#endif // LUASTATE_H
+#endif // CE3D_TSINGLETON_H

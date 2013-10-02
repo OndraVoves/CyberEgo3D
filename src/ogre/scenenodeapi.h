@@ -26,75 +26,19 @@
 */
 
 
-#include "luastate.h"
+#ifndef CE3D_OGRE_SCENENODEAPI_H
+#define CE3D_OGRE_SCENENODEAPI_H
 
-using namespace CE3D::Lua;
+#include "../lua/luastate.h"
 
-bool LuaState::open() {
-    if( isOpen() ) {
-        close();
-    }
+namespace CE3D {
 
-    pState = lua_open();
-    if( !pState ) {
-        return false;
-    }
+class SceneNodeAPI: public CE3D::Lua::LuaLib {
+public:
+    virtual luaL_reg* getLuaReg();
+    virtual const char* getName();
+};
 
-
-
-    initState( );
-    return true;
 }
 
-void LuaState::close() {
-    lua_close( this->pState );
-}
-
-bool LuaState::doFile( const char* filename ) {
-    int error = luaL_dofile( this->pState, filename );
-    if( error ) {
-        LastError = lua_tostring( this->pState, -1);
-        lua_pop(this->pState, 1);
-
-        fprintf( stderr, "%s\n", this->LastError.c_str() );
-    }
-
-    return error;
-}
-
-void LuaState::addPackagePath( const char* path ) {
-    // TODO: prasarna
-    std::string cmd = "package.path = package.path .. \";";
-    cmd.append( path );
-    cmd.append( "\"" );
-
-    luaL_dostring( this->pState, cmd.c_str() );
-}
-
-void LuaState::initState( ) {
-    luaL_openlibs( this->pState );
-}
-
-void LuaState::callGlobal ( const char* name ) {
-    lua_getglobal( this->pState, name );
-
-    if (lua_pcall( this->pState, 0, 0, 0) != 0) {
-        fprintf( stderr, "error running function : %s\n",
-                 lua_tostring(this->pState, -1) );
-    }
-}
-
-void LuaState::callGlobal ( const char* name, float value ) {
-    lua_getglobal( this->pState, name );
-
-    lua_pushnumber( this->pState, value );
-
-    if (lua_pcall( this->pState, 1, 0, 0) != 0) {
-        fprintf( stderr, "error running function : %s\n",
-                 lua_tostring(this->pState, -1) );
-    }
-}
-
-void LuaState::registerLib ( LuaLib* lib ) {
-    luaL_openlib ( this->pState, lib->getName(), lib->getLuaReg(), 0 );
-}
+#endif // CE3D_OGRE_SCENENODEAPI_H

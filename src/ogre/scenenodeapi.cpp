@@ -26,75 +26,66 @@
 */
 
 
-#include "luastate.h"
+#include "scenenodeapi.h"
+#include "../kernel.h"
+#include "Ogre.h"
 
-using namespace CE3D::Lua;
+using namespace CE3D;
 
-bool LuaState::open() {
-    if( isOpen() ) {
-        close();
-    }
+static int newSceneNode( lua_State *L ) {
+    size_t node_name_len = 0;
+    const char* node_name = luaL_checklstring ( L, 1, &node_name_len );
 
-    pState = lua_open();
-    if( !pState ) {
-        return false;
-    }
+    Ogre::SceneNode* node = Kernel::inst().
+                            getOGRESceneMgr()->getRootSceneNode()->createChildSceneNode( node_name );
 
-
-
-    initState( );
-    return true;
+    lua_pushlightuserdata( L, node );
+    return 1;
 }
 
-void LuaState::close() {
-    lua_close( this->pState );
+static int delSceneNode( lua_State *L ) {
+    Ogre::SceneNode* node = static_cast<Ogre::SceneNode*>(lua_touserdata(L, 1));
+    delete node;
+
+    return 0;
 }
 
-bool LuaState::doFile( const char* filename ) {
-    int error = luaL_dofile( this->pState, filename );
-    if( error ) {
-        LastError = lua_tostring( this->pState, -1);
-        lua_pop(this->pState, 1);
+static int setPosition( lua_State *L ) {
+    Ogre::SceneNode* node = static_cast<Ogre::SceneNode*>(lua_touserdata(L, 1));
+    float x = luaL_checknumber( L, 2 );
+    float y = luaL_checknumber( L, 3 );
+    float z = luaL_checknumber( L, 4 );
 
-        fprintf( stderr, "%s\n", this->LastError.c_str() );
-    }
+    printf( "%f, %f, %f\n", x, y, z );
 
-    return error;
+    node->setPosition(x, y, z);
+
+    return 0;
 }
 
-void LuaState::addPackagePath( const char* path ) {
-    // TODO: prasarna
-    std::string cmd = "package.path = package.path .. \";";
-    cmd.append( path );
-    cmd.append( "\"" );
+static int setDirection( lua_State *L ) {
+    Ogre::SceneNode* node = static_cast<Ogre::SceneNode*>(lua_touserdata(L, 1));
+    float x = luaL_checknumber( L, 2 );
+    float y = luaL_checknumber( L, 3 );
+    float z = luaL_checknumber( L, 4 );
 
-    luaL_dostring( this->pState, cmd.c_str() );
+    node->setDirection( Ogre::Vector3( x, y, z ) );
+
+    return 0;
 }
 
-void LuaState::initState( ) {
-    luaL_openlibs( this->pState );
+static luaL_reg lib[] = {
+    {"new", newSceneNode },
+    {"del", delSceneNode },
+    {"setPosition", setPosition },
+    {"setDirection", setDirection },
+    {NULL, NULL}
+};
+
+luaL_reg* SceneNodeAPI::getLuaReg() {
+    return lib;
 }
 
-void LuaState::callGlobal ( const char* name ) {
-    lua_getglobal( this->pState, name );
-
-    if (lua_pcall( this->pState, 0, 0, 0) != 0) {
-        fprintf( stderr, "error running function : %s\n",
-                 lua_tostring(this->pState, -1) );
-    }
-}
-
-void LuaState::callGlobal ( const char* name, float value ) {
-    lua_getglobal( this->pState, name );
-
-    lua_pushnumber( this->pState, value );
-
-    if (lua_pcall( this->pState, 1, 0, 0) != 0) {
-        fprintf( stderr, "error running function : %s\n",
-                 lua_tostring(this->pState, -1) );
-    }
-}
-
-void LuaState::registerLib ( LuaLib* lib ) {
-    luaL_openlib ( this->pState, lib->getName(), lib->getLuaReg(), 0 );
+const char* SceneNodeAPI::getName() {
+    return "OGRESceneNode";
 }

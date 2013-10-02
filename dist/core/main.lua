@@ -1,7 +1,9 @@
 local Entity = require( "entity" )
 local World = require( "world" )
 
-local SN = require( "scenenode" )
+local SN     = require( "scenenode" )
+local MESH   = require( "mesh" )
+local CAMERA = require( "camera" )
 
 C1 = { types="C1" }
 function C1:onAttrChange( name, old, new )
@@ -12,31 +14,42 @@ function C1:onEntityChange( ent )
 	print( "name: "..ent.name )
 end
 
+
 local function main()
 	print( "main" )
 
 	s = SN.new()
-	print(s.types)
-
-	world = World()
-	ent1 = world:addEntity( { name="ssss" } )
+	
+	m = MESH.new()
+	c = CAMERA.new()
+ 	
+ 	world = World()
+	
+	ent1 = world:addEntity( {
+		name="ssss",
+		components={ SN.new(), c }
+	} )
+	
 	
 	ent2 = world:addEntity( { 
-		components={ s  }
+		components={ s, m }
 	})
-
-	ent2:setAttr( "A1", { 0.0, 0.0, 0.0 } )
-	ent2:setAttr( "A2", { 0.0, 0.0, 1.0 } )
-
+	
+	ent1:setAttr( "position", { 0, 0, 150 } )
+	--ent1:setAttr( "look_at", { 0, 0, -1.0 } )
+	
+	ent2:setAttr( "position", { 0, 0, 100 } )
+	ent2:setAttr( "mesh_file", "Sinbad.mesh" )
+	
 	print( ent1:toJSON() )
 	print( ent2:toJSON() )
 	
-	SN.clientTick(10)
+	--SN.clientTick(10)
 	
 end
 
 function clientTick( dt )
-	print("client:", dt)
+	--print("client:", dt)
 end
 
 function serverTick( dt )

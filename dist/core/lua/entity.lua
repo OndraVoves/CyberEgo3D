@@ -3,19 +3,20 @@ local function new( obj )
 				  world_id=obj.world_id or -1,
 				  attr=obj.attr or {},
 				  components=obj.components or {},
+				  data={},
 	}
 
 	function cls:initAttr( name, default_value )
 		if not self.attr.name then
 			self:setAttr( name, default_value )
-		end 
+		end
+
 	end
 	
 	function cls:setAttr( name, value )
 		local old = self.attr[name]
 		self.attr[name] = value
 		
-		--TODO: Notify component
 		for k,v in pairs(self.components) do
 			if v.onAttrChange ~= nil then
 				v:onAttrChange( name, old, value )
@@ -40,7 +41,7 @@ local function new( obj )
 		return e(r)
 	end	
 	
-	local mt = { __index=cls }
+	local mt = { __index=cls.__index }
 	return setmetatable( cls, mt)
 end
 

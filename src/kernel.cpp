@@ -27,13 +27,24 @@
 
 
 #include "kernel.h"
+#include "ogre/scenenodeapi.h"
+#include "ogre/mesh.h"
+#include "ogre/camera.h"
 #include <Overlay/OgreFontManager.h>
 
 using namespace CE3D;
 bool Kernel::init() {
     MainLuaStat.open();
     MainLuaStat.addPackagePath(";./core/lua/?.lua;./core/components/?.lua");
-    MainLuaStat.doFile( "./core/main.lua" );
+
+    // TODO: dynamic
+    SceneNodeAPI *scene_node_api = new SceneNodeAPI();
+    MeshAPI *mesh_node_api = new MeshAPI();
+    CameraAPI *camera_api = new CameraAPI();
+
+    MainLuaStat.registerLib( scene_node_api );
+    MainLuaStat.registerLib( mesh_node_api );
+    MainLuaStat.registerLib( camera_api );
 
     //TODO: volitelna cesta... pluginy mozna napevno v programu
     OGRERoot = new Ogre::Root ( "./data/plugins.cfg" );
@@ -99,6 +110,8 @@ bool Kernel::createWindow ( uint width, uint height ) {
 
     updateWindow();
 
+    OGRESceneMgr->setAmbientLight(Ogre::ColourValue(0.5f, 0.5f, 0.5f));
+
     //KeyListener = new KernelKeyListener;
     OISKeyboard->setEventCallback ( this );
 
@@ -121,10 +134,6 @@ void Kernel::shutdown() {
 
     //CEGUISystem->destroy();
 
-    delete FrameListener;
-    delete MouseListener;
-    delete KeyListener;
-
     //delete DebugDrawer::getSingletonPtr();
 
     delete OGRERoot;
@@ -142,6 +151,8 @@ void Kernel::updateWindow() {
 
 
 void Kernel::run() {
+    MainLuaStat.doFile( "./core/main.lua" );
+
     OGRERoot->startRendering();
 }
 

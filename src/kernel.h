@@ -32,16 +32,13 @@
 #include <Ogre.h>
 #include <OIS.h>
 #include "lua/luastate.h"
+#include "tsingleton.h"
 
 namespace CE3D {
-    class KernelFrameListener;
-    class KernelKeyListener;
-    class KernelMouseListener;
-}
-
-
-namespace CE3D {
-    class Kernel : public OIS::MouseListener, public OIS::KeyListener, public Ogre::FrameListener  {
+    class Kernel : public OIS::MouseListener,
+                   public OIS::KeyListener,
+                   public Ogre::FrameListener,
+                   public TSingleton<Kernel> {
 public:
     bool init();
     void shutdown();
@@ -66,6 +63,11 @@ public:
 private:
     void updateWindow();
 
+public:
+    Ogre::Root         * getOGRERoot(){return this->OGRERoot;}
+    Ogre::RenderWindow * getOGREWIndow(){return this->OGREWIndow;}
+    Ogre::SceneManager * getOGRESceneMgr(){return this->OGRESceneMgr;}
+
 private:
     Ogre::Root         *OGRERoot;
     Ogre::RenderWindow *OGREWIndow;
@@ -74,10 +76,6 @@ private:
     OIS::InputManager  *OISInputManager;
     OIS::Keyboard      *OISKeyboard;
     OIS::Mouse         *OISMouse;
-
-    KernelFrameListener *FrameListener;
-    KernelKeyListener   *KeyListener;
-    KernelMouseListener *MouseListener;
 
     Lua::LuaState MainLuaStat;
 };

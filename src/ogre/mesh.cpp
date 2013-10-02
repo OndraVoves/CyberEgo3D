@@ -26,75 +26,40 @@
 */
 
 
-#include "luastate.h"
+#include "mesh.h"
+#include "../kernel.h"
 
-using namespace CE3D::Lua;
+using namespace CE3D;
 
-bool LuaState::open() {
-    if( isOpen() ) {
-        close();
-    }
+static int create( lua_State *L ) {
+    size_t mesh_file_len = 0;
+    const char* mesh_file = luaL_checklstring ( L, 1, &mesh_file_len );
 
-    pState = lua_open();
-    if( !pState ) {
-        return false;
-    }
+    Ogre::SceneNode* node = static_cast<Ogre::SceneNode*>(lua_touserdata(L, 2));
 
+    Ogre::Entity *ent = Kernel::inst().getOGRESceneMgr()->createEntity ( mesh_file );
+    node->attachObject( ent );
 
-
-    initState( );
-    return true;
+    lua_pushlightuserdata( L, ent );
+    return 1;
 }
 
-void LuaState::close() {
-    lua_close( this->pState );
+static int del( lua_State *L ) {
+    Ogre::SceneNode* node = static_cast<Ogre::SceneNode*>(lua_touserdata(L, 1));
+    delete node;
+    return 0;
 }
 
-bool LuaState::doFile( const char* filename ) {
-    int error = luaL_dofile( this->pState, filename );
-    if( error ) {
-        LastError = lua_tostring( this->pState, -1);
-        lua_pop(this->pState, 1);
+static luaL_reg lib[] = {
+    {"new", create },
+    {"del", del },
+    {NULL, NULL}
+};
 
-        fprintf( stderr, "%s\n", this->LastError.c_str() );
-    }
-
-    return error;
+luaL_reg* MeshAPI::getLuaReg() {
+    return lib;
 }
 
-void LuaState::addPackagePath( const char* path ) {
-    // TODO: prasarna
-    std::string cmd = "package.path = package.path .. \";";
-    cmd.append( path );
-    cmd.append( "\"" );
-
-    luaL_dostring( this->pState, cmd.c_str() );
-}
-
-void LuaState::initState( ) {
-    luaL_openlibs( this->pState );
-}
-
-void LuaState::callGlobal ( const char* name ) {
-    lua_getglobal( this->pState, name );
-
-    if (lua_pcall( this->pState, 0, 0, 0) != 0) {
-        fprintf( stderr, "error running function : %s\n",
-                 lua_tostring(this->pState, -1) );
-    }
-}
-
-void LuaState::callGlobal ( const char* name, float value ) {
-    lua_getglobal( this->pState, name );
-
-    lua_pushnumber( this->pState, value );
-
-    if (lua_pcall( this->pState, 1, 0, 0) != 0) {
-        fprintf( stderr, "error running function : %s\n",
-                 lua_tostring(this->pState, -1) );
-    }
-}
-
-void LuaState::registerLib ( LuaLib* lib ) {
-    luaL_openlib ( this->pState, lib->getName(), lib->getLuaReg(), 0 );
+const char* MeshAPI::getName() {
+    return "OGREMesh";
 }
