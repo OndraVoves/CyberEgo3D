@@ -44,8 +44,21 @@ static int isKeyDown ( lua_State *L ) {
     return 1;
 }
 
+static int isModifierDown ( lua_State *L ) {
+    OIS::Keyboard *kb = Kernel::inst().getOISKeyboard();
+
+    int mod = luaL_checkinteger( L, 1 );
+
+    bool r = kb-> isModifierDown ( OIS::Keyboard::Modifier( mod ) );
+
+    lua_pushboolean( L, r );
+
+    return 1;
+}
+
 static luaL_reg lib[] = {
     {"isKeyDown", isKeyDown},
+    {"isModifierDown", isModifierDown},
     {NULL, NULL}
 };
 
@@ -54,5 +67,5 @@ luaL_reg *KeyboardAPI::getLuaReg() {
 }
 
 const char *KeyboardAPI::getName() {
-    return "KeyboardAPI";
+    return "Keyboard";
 }

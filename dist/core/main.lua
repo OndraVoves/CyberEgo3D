@@ -32,33 +32,32 @@ function clientTick( dt )
 	local speed = 50;
 	
 	-- Position
-	if KeyboardAPI.isKeyDown( 17 ) then
+	if Keyboard.isKeyDown( 17 ) then
 		local p = ent2.attr.position;
 		p[3] = p[3] + (speed*dt_s)
 		  
 		ent2:setAttr( "position", p )
 	end				
 				
-	if KeyboardAPI.isKeyDown( 31 ) then
+	if Keyboard.isKeyDown( 31 ) then
 		local p = ent2.attr.position;
 		p[3] = p[3] - (speed*dt_s)
 		  
 		ent2:setAttr( "position", p )
 	end
 	
-	if KeyboardAPI.isKeyDown( 30 ) then
+	if Keyboard.isKeyDown( 30 ) then
 		local p = ent2.attr.position;
 		p[1] = p[1] - (speed*dt_s)
 		  
 		ent2:setAttr( "position", p )
 	end
 	
-	if KeyboardAPI.isKeyDown( 32 ) then
+	if Keyboard.isKeyDown( 32 ) then
 		local p = ent2.attr.position;
 		p[1] = p[1] + (speed*dt_s)
 		  
 		ent2:setAttr( "position", p )
-	end
 	end
 
 function serverTick( dt )
