@@ -56,8 +56,6 @@ static int setPosition ( lua_State *L ) {
     float y = luaL_checknumber ( L, 3 );
     float z = luaL_checknumber ( L, 4 );
 
-    printf ( "%f, %f, %f\n", x, y, z );
-
     node->setPosition ( x, y, z );
 
     return 0;
@@ -73,6 +71,7 @@ static int setDirection ( lua_State *L ) {
 
     return 0;
 }
+
 
 static int setVisible ( lua_State *L ) {
     Ogre::SceneNode *node = static_cast<Ogre::SceneNode *> ( lua_touserdata ( L, 1 ) );

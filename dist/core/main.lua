@@ -5,7 +5,7 @@ local CSceneNode = require( "scenenode" )
 local CMesh		 = require( "mesh" )
 local CCamera    = require( "camera" )
 
-local function main()
+function main()
 	print( "main" )
 
  	world = World()
@@ -24,39 +24,71 @@ local function main()
 	
 	ent2:setAttr( "position", { 0, 0, 100 } )
 	ent2:setAttr( "mesh_file", "Sinbad.mesh" )
-	
-	print( ent1:toJSON() )
-	print( ent2:toJSON() )
 end
 
 function clientTick( dt )
-	print("client:", dt)
-end
+	--print("client:", dt)
+	local dt_s = dt / 1000.0
+	local speed = 50;
+	
+	-- Position
+	if KeyboardAPI.isKeyDown( 17 ) then
+		local p = ent2.attr.position;
+		p[3] = p[3] + (speed*dt_s)
+		  
+		ent2:setAttr( "position", p )
+	end				
+				
+	if KeyboardAPI.isKeyDown( 31 ) then
+		local p = ent2.attr.position;
+		p[3] = p[3] - (speed*dt_s)
+		  
+		ent2:setAttr( "position", p )
+	end
+	
+	if KeyboardAPI.isKeyDown( 30 ) then
+		local p = ent2.attr.position;
+		p[1] = p[1] - (speed*dt_s)
+		  
+		ent2:setAttr( "position", p )
+	end
+	
+	if KeyboardAPI.isKeyDown( 32 ) then
+		local p = ent2.attr.position;
+		p[1] = p[1] + (speed*dt_s)
+		  
+		ent2:setAttr( "position", p )
+	end
+	end
 
 function serverTick( dt )
 	--print("server:", dt)
 end
 
-function keyPressed()
-	print("keyPressed")
+function keyPressed( keycode )
+	print("keyPressed: "..keycode)
+	
+	-- Direction
+	if keycode == 200 then
+		local d = ent2.attr.direction;
+		d[2] = d[2] + (0.00000001)
+		  
+		ent2:setAttr( "direction", d )
+	end		
 end
 
-function keyReleased()
-	print("keyReleased")
+function keyReleased( keycode )
+	--print("keyReleased")
 end
 
 function mouseMoved()
-	print("moveMoved")
+	--print("moveMoved")
 end
 
 function mousePressed()
-	print("movePressed")
+	--print("movePressed")
 end
 
 function mouseReleased()
-	print("moveReleased")
+	--print("moveReleased")
 end
-
-
-main()
-

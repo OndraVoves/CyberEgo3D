@@ -73,7 +73,14 @@ namespace CE3D {
                 void callGlobal ( const char *name );
                 void callGlobal ( const char *name, float value );
 
+                void callRef( int ref );
+                void callRef( int ref, int value );
+                void callRef( int ref, float value );
+
+                int getGlobalRef( const char *name );
+
                 void registerLib ( LuaLib *lib );
+
 
             protected:
                 virtual void initState();

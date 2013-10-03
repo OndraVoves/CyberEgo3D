@@ -95,6 +95,49 @@ void LuaState::callGlobal ( const char *name, float value ) {
     }
 }
 
+void LuaState::callRef ( int ref ) {
+    lua_rawgeti( this->pState, LUA_REGISTRYINDEX, ref );
+
+    if ( lua_pcall ( this->pState, 0, 0, 0 ) != 0 ) {
+        fprintf ( stderr, "error running function : %s\n",
+                  lua_tostring ( this->pState, -1 ) );
+    }
+}
+
+void LuaState::callRef ( int ref, float value ) {
+    lua_rawgeti( this->pState, LUA_REGISTRYINDEX, ref );
+
+    lua_pushnumber ( this->pState, value );
+
+    if ( lua_pcall ( this->pState, 1, 0, 0 ) != 0 ) {
+        fprintf ( stderr, "error running function : %s\n",
+                  lua_tostring ( this->pState, -1 ) );
+    }
+}
+
+void LuaState::callRef ( int ref, int value ) {
+    lua_rawgeti( this->pState, LUA_REGISTRYINDEX, ref );
+
+    lua_pushinteger ( this->pState, value );
+
+    if ( lua_pcall ( this->pState, 1, 0, 0 ) != 0 ) {
+        fprintf ( stderr, "error running function : %s\n",
+                  lua_tostring ( this->pState, -1 ) );
+    }
+}
+
+
+
+int LuaState::getGlobalRef ( const char* name ) {
+    lua_getglobal ( this->pState, name );
+
+    int r = luaL_ref( this->pState, LUA_REGISTRYINDEX );
+
+    return r;
+}
+
+
 void LuaState::registerLib ( LuaLib *lib ) {
     luaL_openlib ( this->pState, lib->getName(), lib->getLuaReg(), 0 );
 }
+

@@ -77,6 +77,31 @@ namespace CE3D {
                 return this->OGRESceneMgr;
             }
 
+            OIS::Keyboard* getOISKeyboard() {
+                return this->OISKeyboard;
+            }
+
+            OIS::Mouse* getOISMouse() {
+                return this->OISMouse;
+            }
+
+        private:
+            void renderFrame();
+
+        private:
+            int LuaMouseMoved;
+            int LuaMousePressed;
+            int LuaMouseReleased;
+            int LuaKeyPressed;
+            int LuaKeyReleased;
+            int LuaFrameStarted;
+            int LuaFrameEnded;
+            int LuaClientTick;
+            int LuaServerTick;
+
+
+            void initMainLuaRef();
+
         private:
             Ogre::Root         *OGRERoot;
             Ogre::RenderWindow *OGREWIndow;

@@ -61,6 +61,8 @@ SET( CE3D_SRC
     src/lua/luastate.cpp
     src/kernel.cpp
 
+    src/keyboardapi.cpp
+
     src/ogre/scenenodeapi.cpp
     src/ogre/mesh.cpp
     src/ogre/camera.cpp

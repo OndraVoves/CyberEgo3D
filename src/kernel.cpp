@@ -30,12 +30,22 @@
 #include "ogre/scenenodeapi.h"
 #include "ogre/mesh.h"
 #include "ogre/camera.h"
+#include "keyboardapi.h"
 #include <Overlay/OgreFontManager.h>
 
 using namespace CE3D;
 
 Kernel::Kernel()
-: LastMS(0) {
+: LastMS(0),
+    LuaMouseMoved(-1),
+    LuaMousePressed(-1),
+    LuaMouseReleased(-1),
+    LuaKeyPressed(-1),
+    LuaKeyReleased(-1),
+    LuaFrameStarted(-1),
+    LuaFrameEnded(-1),
+    LuaClientTick(-1),
+    LuaServerTick(-1){
 
 }
 
@@ -52,10 +62,12 @@ bool Kernel::init() {
     SceneNodeAPI *scene_node_api = new SceneNodeAPI();
     MeshAPI *mesh_node_api = new MeshAPI();
     CameraAPI *camera_api = new CameraAPI();
+    KeyboardAPI *k_api = new KeyboardAPI();
 
     MainLuaStat.registerLib ( scene_node_api );
     MainLuaStat.registerLib ( mesh_node_api );
     MainLuaStat.registerLib ( camera_api );
+    MainLuaStat.registerLib ( k_api );
 
     //TODO: volitelna cesta... pluginy mozna napevno v programu
     OGRERoot = new Ogre::Root ( "./data/plugins.cfg" );
@@ -123,13 +135,8 @@ bool Kernel::createWindow ( uint width, uint height ) {
 
     OGRESceneMgr->setAmbientLight ( Ogre::ColourValue ( 0.5f, 0.5f, 0.5f ) );
 
-    //KeyListener = new KernelKeyListener;
     OISKeyboard->setEventCallback ( this );
-
-    //MouseListener = new KernelMouseListener;
     OISMouse->setEventCallback ( this );
-
-    //FrameListener = new KernelFrameListener ( OISKeyboard, OISMouse );
     OGRERoot->addFrameListener ( this );
 }
 
@@ -163,22 +170,23 @@ void Kernel::updateWindow() {
 
 void Kernel::run() {
     MainLuaStat.doFile ( "./core/main.lua" );
+    initMainLuaRef();
 
-    //OGRERoot->startRendering();
+    int r = MainLuaStat.getGlobalRef( "main" );
+    MainLuaStat.callRef( r );
 
     while(1){
-        /* calc d time */
+        /* calc d_time */
         ulong ms = OGRERoot->getTimer()->getMilliseconds();
         ulong d_ms = ms - this->LastMS;
         this->LastMS = ms;
 
         /*Tick*/
-        MainLuaStat.callGlobal ( "clientTick", d_ms );
-        MainLuaStat.callGlobal ( "serverTick", d_ms );
+        MainLuaStat.callRef( this->LuaClientTick, (int)d_ms );
+        MainLuaStat.callRef( this->LuaServerTick, (int)d_ms );
 
         /* rendering */
-        Ogre::WindowEventUtilities::messagePump();
-        OGRERoot->renderOneFrame(  );
+        renderFrame();
     }
 }
 
@@ -193,29 +201,44 @@ bool Kernel::frameStarted ( const Ogre::FrameEvent &evt ) {
 }
 
 bool Kernel::keyPressed ( const OIS::KeyEvent &e ) {
-    MainLuaStat.callGlobal ( "keyPressed" );
-
+    MainLuaStat.callRef( this->LuaKeyPressed, (int)e.key );
     return true;
 }
 
 bool Kernel::keyReleased ( const OIS::KeyEvent &e ) {
-    MainLuaStat.callGlobal ( "keyReleased" );
-
+    MainLuaStat.callRef( this->LuaKeyReleased, (int)e.key );
     return true;
 }
 
 bool Kernel::mouseMoved ( const OIS::MouseEvent &e ) {
-    MainLuaStat.callGlobal ( "mouseMoved" );
-
+    MainLuaStat.callRef( this->LuaMouseMoved );
     return true;
 }
 
 bool Kernel::mousePressed ( const OIS::MouseEvent &e, OIS::MouseButtonID id ) {
-    MainLuaStat.callGlobal ( "mousePressed" );
+    MainLuaStat.callRef( this->LuaMousePressed);
     return true;
 }
 
 bool Kernel::mouseReleased ( const OIS::MouseEvent &e, OIS::MouseButtonID id ) {
-    MainLuaStat.callGlobal ( "mouseReleased" );
+    MainLuaStat.callRef( this->LuaMouseReleased);
     return true;
+}
+
+void Kernel::renderFrame() {
+    Ogre::WindowEventUtilities::messagePump();
+    OGRERoot->renderOneFrame();
+}
+
+void Kernel::initMainLuaRef() {
+    this->LuaMouseMoved = MainLuaStat.getGlobalRef( "mouseMoved"  );
+    this->LuaMousePressed = MainLuaStat.getGlobalRef( "mousePressed"  );
+    this->LuaMouseReleased = MainLuaStat.getGlobalRef( "mouseReleased"  );
+    this->LuaKeyPressed = MainLuaStat.getGlobalRef( "keyPressed"  );
+    this->LuaKeyReleased = MainLuaStat.getGlobalRef( "keyReleased"  );
+
+    this->LuaClientTick =  MainLuaStat.getGlobalRef( "clientTick"  );
+    this->LuaServerTick =  MainLuaStat.getGlobalRef( "serverTick"  );
+//    this->LuaFrameStarted = MainLuaStat.getGlobalRef( "FrameStarted"  );
+//    this->LuaFrameEnded = MainLuaStat.getGlobalRef( "FrameEnded"  );
 }

@@ -33,10 +33,10 @@ local function new()
 		-- TODO: zrusit data v prechozi entite
 		self.entity = ent
 
-		ent:initAttr( "scene_node_name", ent.name  )
-		ent:initAttr( "position", {0.0, 0.0, 0.0}  )
-		ent:initAttr( "direction", {0.0, 0.0, 0.0}  )
-		ent:initAttr( "visible", true  )
+		ent:initAttr( "scene_node_name", ent.name )
+		ent:initAttr( "position", {0.0, 0.0, 0.0} )
+		ent:initAttr( "direction", {0.0, 0.0, 0.0} )
+		ent:initAttr( "visible", true )
 
 		ent.data.scenenode = OGRESceneNode.new( ent.attr.scene_node_name )
 	end
