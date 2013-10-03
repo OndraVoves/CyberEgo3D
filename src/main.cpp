@@ -5,11 +5,11 @@
 #include "kernel.h"
 
 
-int main( int argc, const char* argv[] ) {
+int main ( int argc, const char *argv[] ) {
     CE3D::Kernel kernel;
 
     kernel.init();
-    kernel.createWindow( 800, 600 );
+    kernel.createWindow ( 800, 600 );
     kernel.run();
 
     return 0;

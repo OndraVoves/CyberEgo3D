@@ -1,0 +1,19 @@
+############################
+# CyberEgo astyle formate. #
+############################
+
+--indent=spaces=4
+--brackets=attach
+
+--indent-classes
+--indent-switches
+--indent-namespaces
+--indent-preprocessor
+
+--pad-oper
+--pad-paren
+
+--add-brackets
+--convert-tabs
+--align-pointer=name
+

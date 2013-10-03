@@ -36,49 +36,61 @@
 
 namespace CE3D {
     class Kernel : public OIS::MouseListener,
-                   public OIS::KeyListener,
-                   public Ogre::FrameListener,
-                   public TSingleton<Kernel> {
-public:
-    bool init();
-    void shutdown();
+        public OIS::KeyListener,
+        public Ogre::FrameListener,
+        public TSingleton<Kernel> {
+        public:
+            Kernel();
+            ~Kernel();
 
-    bool createWindow( uint width, uint height );
+            bool init();
+            void shutdown();
 
-    void run();
+            bool createWindow ( uint width, uint height );
 
-public:
-    bool mouseMoved ( const OIS::MouseEvent &e );
-    bool mousePressed ( const OIS::MouseEvent &e, OIS::MouseButtonID id );
-    bool mouseReleased ( const OIS::MouseEvent &e, OIS::MouseButtonID id );
+            void run();
 
-public:
-    bool keyPressed ( const OIS::KeyEvent &e );
-    bool keyReleased ( const OIS::KeyEvent &e );
+        public:
+            bool mouseMoved ( const OIS::MouseEvent &e );
+            bool mousePressed ( const OIS::MouseEvent &e, OIS::MouseButtonID id );
+            bool mouseReleased ( const OIS::MouseEvent &e, OIS::MouseButtonID id );
 
-public:
-    bool frameStarted ( const Ogre::FrameEvent &evt );
-    bool frameEnded ( const Ogre::FrameEvent &evt );
+        public:
+            bool keyPressed ( const OIS::KeyEvent &e );
+            bool keyReleased ( const OIS::KeyEvent &e );
 
-private:
-    void updateWindow();
+        public:
+            bool frameStarted ( const Ogre::FrameEvent &evt );
+            bool frameEnded ( const Ogre::FrameEvent &evt );
 
-public:
-    Ogre::Root         * getOGRERoot(){return this->OGRERoot;}
-    Ogre::RenderWindow * getOGREWIndow(){return this->OGREWIndow;}
-    Ogre::SceneManager * getOGRESceneMgr(){return this->OGRESceneMgr;}
+        private:
+            void updateWindow();
 
-private:
-    Ogre::Root         *OGRERoot;
-    Ogre::RenderWindow *OGREWIndow;
-    Ogre::SceneManager *OGRESceneMgr;
+        public:
+            Ogre::Root          *getOGRERoot() {
+                return this->OGRERoot;
+            }
+            Ogre::RenderWindow *getOGREWIndow() {
+                return this->OGREWIndow;
+            }
+            Ogre::SceneManager *getOGRESceneMgr() {
+                return this->OGRESceneMgr;
+            }
 
-    OIS::InputManager  *OISInputManager;
-    OIS::Keyboard      *OISKeyboard;
-    OIS::Mouse         *OISMouse;
+        private:
+            Ogre::Root         *OGRERoot;
+            Ogre::RenderWindow *OGREWIndow;
+            Ogre::SceneManager *OGRESceneMgr;
 
-    Lua::LuaState MainLuaStat;
-};
+            OIS::InputManager  *OISInputManager;
+            OIS::Keyboard      *OISKeyboard;
+            OIS::Mouse         *OISMouse;
+
+            Lua::LuaState MainLuaStat;
+
+        private:
+            ulong LastMS;
+    };
 }
 
 #endif // CE3D_OGRE_H

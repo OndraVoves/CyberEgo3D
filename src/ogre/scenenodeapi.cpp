@@ -32,44 +32,54 @@
 
 using namespace CE3D;
 
-static int newSceneNode( lua_State *L ) {
+static int newSceneNode ( lua_State *L ) {
     size_t node_name_len = 0;
-    const char* node_name = luaL_checklstring ( L, 1, &node_name_len );
+    const char *node_name = luaL_checklstring ( L, 1, &node_name_len );
 
-    Ogre::SceneNode* node = Kernel::inst().
-                            getOGRESceneMgr()->getRootSceneNode()->createChildSceneNode( node_name );
+    Ogre::SceneNode *node = Kernel::inst().
+                            getOGRESceneMgr()->getRootSceneNode()->createChildSceneNode ( node_name );
 
-    lua_pushlightuserdata( L, node );
+    lua_pushlightuserdata ( L, node );
     return 1;
 }
 
-static int delSceneNode( lua_State *L ) {
-    Ogre::SceneNode* node = static_cast<Ogre::SceneNode*>(lua_touserdata(L, 1));
+static int delSceneNode ( lua_State *L ) {
+    Ogre::SceneNode *node = static_cast<Ogre::SceneNode *> ( lua_touserdata ( L, 1 ) );
     delete node;
 
     return 0;
 }
 
-static int setPosition( lua_State *L ) {
-    Ogre::SceneNode* node = static_cast<Ogre::SceneNode*>(lua_touserdata(L, 1));
-    float x = luaL_checknumber( L, 2 );
-    float y = luaL_checknumber( L, 3 );
-    float z = luaL_checknumber( L, 4 );
+static int setPosition ( lua_State *L ) {
+    Ogre::SceneNode *node = static_cast<Ogre::SceneNode *> ( lua_touserdata ( L, 1 ) );
+    float x = luaL_checknumber ( L, 2 );
+    float y = luaL_checknumber ( L, 3 );
+    float z = luaL_checknumber ( L, 4 );
 
-    printf( "%f, %f, %f\n", x, y, z );
+    printf ( "%f, %f, %f\n", x, y, z );
 
-    node->setPosition(x, y, z);
+    node->setPosition ( x, y, z );
 
     return 0;
 }
 
-static int setDirection( lua_State *L ) {
-    Ogre::SceneNode* node = static_cast<Ogre::SceneNode*>(lua_touserdata(L, 1));
-    float x = luaL_checknumber( L, 2 );
-    float y = luaL_checknumber( L, 3 );
-    float z = luaL_checknumber( L, 4 );
+static int setDirection ( lua_State *L ) {
+    Ogre::SceneNode *node = static_cast<Ogre::SceneNode *> ( lua_touserdata ( L, 1 ) );
+    float x = luaL_checknumber ( L, 2 );
+    float y = luaL_checknumber ( L, 3 );
+    float z = luaL_checknumber ( L, 4 );
 
-    node->setDirection( Ogre::Vector3( x, y, z ) );
+    node->setDirection ( Ogre::Vector3 ( x, y, z ) );
+
+    return 0;
+}
+
+static int setVisible ( lua_State *L ) {
+    Ogre::SceneNode *node = static_cast<Ogre::SceneNode *> ( lua_touserdata ( L, 1 ) );
+
+    int visible = lua_toboolean ( L, 2 );
+
+    node->setVisible ( visible );
 
     return 0;
 }
@@ -79,13 +89,14 @@ static luaL_reg lib[] = {
     {"del", delSceneNode },
     {"setPosition", setPosition },
     {"setDirection", setDirection },
+    {"setVisible", setVisible },
     {NULL, NULL}
 };
 
-luaL_reg* SceneNodeAPI::getLuaReg() {
+luaL_reg *SceneNodeAPI::getLuaReg() {
     return lib;
 }
 
-const char* SceneNodeAPI::getName() {
+const char *SceneNodeAPI::getName() {
     return "OGRESceneNode";
 }

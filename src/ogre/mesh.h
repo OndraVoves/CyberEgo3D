@@ -33,9 +33,9 @@
 
 namespace CE3D {
     class MeshAPI: public CE3D::Lua::LuaLib {
-    public:
-        virtual luaL_reg* getLuaReg();
-        virtual const char* getName();
+        public:
+            virtual luaL_reg *getLuaReg();
+            virtual const char *getName();
     };
 }
 

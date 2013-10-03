@@ -31,12 +31,12 @@
 using namespace CE3D::Lua;
 
 bool LuaState::open() {
-    if( isOpen() ) {
+    if ( isOpen() ) {
         close();
     }
 
     pState = lua_open();
-    if( !pState ) {
+    if ( !pState ) {
         return false;
     }
 
@@ -47,54 +47,54 @@ bool LuaState::open() {
 }
 
 void LuaState::close() {
-    lua_close( this->pState );
+    lua_close ( this->pState );
 }
 
-bool LuaState::doFile( const char* filename ) {
-    int error = luaL_dofile( this->pState, filename );
-    if( error ) {
-        LastError = lua_tostring( this->pState, -1);
-        lua_pop(this->pState, 1);
+bool LuaState::doFile ( const char *filename ) {
+    int error = luaL_dofile ( this->pState, filename );
+    if ( error ) {
+        LastError = lua_tostring ( this->pState, -1 );
+        lua_pop ( this->pState, 1 );
 
-        fprintf( stderr, "%s\n", this->LastError.c_str() );
+        fprintf ( stderr, "%s\n", this->LastError.c_str() );
     }
 
     return error;
 }
 
-void LuaState::addPackagePath( const char* path ) {
+void LuaState::addPackagePath ( const char *path ) {
     // TODO: prasarna
     std::string cmd = "package.path = package.path .. \";";
-    cmd.append( path );
-    cmd.append( "\"" );
+    cmd.append ( path );
+    cmd.append ( "\"" );
 
-    luaL_dostring( this->pState, cmd.c_str() );
+    luaL_dostring ( this->pState, cmd.c_str() );
 }
 
 void LuaState::initState( ) {
-    luaL_openlibs( this->pState );
+    luaL_openlibs ( this->pState );
 }
 
-void LuaState::callGlobal ( const char* name ) {
-    lua_getglobal( this->pState, name );
+void LuaState::callGlobal ( const char *name ) {
+    lua_getglobal ( this->pState, name );
 
-    if (lua_pcall( this->pState, 0, 0, 0) != 0) {
-        fprintf( stderr, "error running function : %s\n",
-                 lua_tostring(this->pState, -1) );
+    if ( lua_pcall ( this->pState, 0, 0, 0 ) != 0 ) {
+        fprintf ( stderr, "error running function : %s\n",
+                  lua_tostring ( this->pState, -1 ) );
     }
 }
 
-void LuaState::callGlobal ( const char* name, float value ) {
-    lua_getglobal( this->pState, name );
+void LuaState::callGlobal ( const char *name, float value ) {
+    lua_getglobal ( this->pState, name );
 
-    lua_pushnumber( this->pState, value );
+    lua_pushnumber ( this->pState, value );
 
-    if (lua_pcall( this->pState, 1, 0, 0) != 0) {
-        fprintf( stderr, "error running function : %s\n",
-                 lua_tostring(this->pState, -1) );
+    if ( lua_pcall ( this->pState, 1, 0, 0 ) != 0 ) {
+        fprintf ( stderr, "error running function : %s\n",
+                  lua_tostring ( this->pState, -1 ) );
     }
 }
 
-void LuaState::registerLib ( LuaLib* lib ) {
+void LuaState::registerLib ( LuaLib *lib ) {
     luaL_openlib ( this->pState, lib->getName(), lib->getLuaReg(), 0 );
 }

@@ -33,11 +33,11 @@
 
 #ifdef __cplusplus
 extern "C" {
-    #endif
-    #include "lua.h"
-    #include "lauxlib.h"
-    #include "lualib.h"
-    #ifdef __cplusplus
+#endif
+#include "lua.h"
+#include "lauxlib.h"
+#include "lualib.h"
+#ifdef __cplusplus
 }
 #endif
 
@@ -45,38 +45,42 @@ namespace CE3D {
     namespace Lua {
         class LuaLib {
             public:
-                virtual luaL_reg* getLuaReg() = 0;
-                virtual const char* getName() = 0;
+                virtual luaL_reg *getLuaReg() = 0;
+                virtual const char *getName() = 0;
         };
 
         class LuaState {
-        public:
-            LuaState() : pState(nullptr) {
-            }
+            public:
+                LuaState() : pState ( nullptr ) {
+                }
 
-            virtual ~LuaState() {
-                close();
-            }
+                virtual ~LuaState() {
+                    close();
+                }
 
-            inline bool isOpen() { return (pState != nullptr); }
-            inline bool isClose() { return !isOpen(); }
+                inline bool isOpen() {
+                    return ( pState != nullptr );
+                }
+                inline bool isClose() {
+                    return !isOpen();
+                }
 
-            bool open();
-            void close();
-            bool doFile( const char* filename );
-            void addPackagePath( const char* path );
+                bool open();
+                void close();
+                bool doFile ( const char *filename );
+                void addPackagePath ( const char *path );
 
-            void callGlobal( const char* name );
-            void callGlobal( const char* name, float value );
+                void callGlobal ( const char *name );
+                void callGlobal ( const char *name, float value );
 
-            void registerLib( LuaLib *lib );
+                void registerLib ( LuaLib *lib );
 
-        protected:
-            virtual void initState();
+            protected:
+                virtual void initState();
 
-        private:
-            lua_State *pState;
-            std::string LastError;
+            private:
+                lua_State *pState;
+                std::string LastError;
         };
     }
 }

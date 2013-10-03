@@ -31,21 +31,21 @@
 
 using namespace CE3D;
 
-static int create( lua_State *L ) {
+static int create ( lua_State *L ) {
     size_t mesh_file_len = 0;
-    const char* mesh_file = luaL_checklstring ( L, 1, &mesh_file_len );
+    const char *mesh_file = luaL_checklstring ( L, 1, &mesh_file_len );
 
-    Ogre::SceneNode* node = static_cast<Ogre::SceneNode*>(lua_touserdata(L, 2));
+    Ogre::SceneNode *node = static_cast<Ogre::SceneNode *> ( lua_touserdata ( L, 2 ) );
 
     Ogre::Entity *ent = Kernel::inst().getOGRESceneMgr()->createEntity ( mesh_file );
-    node->attachObject( ent );
+    node->attachObject ( ent );
 
-    lua_pushlightuserdata( L, ent );
+    lua_pushlightuserdata ( L, ent );
     return 1;
 }
 
-static int del( lua_State *L ) {
-    Ogre::SceneNode* node = static_cast<Ogre::SceneNode*>(lua_touserdata(L, 1));
+static int del ( lua_State *L ) {
+    Ogre::SceneNode *node = static_cast<Ogre::SceneNode *> ( lua_touserdata ( L, 1 ) );
     delete node;
     return 0;
 }
@@ -56,10 +56,10 @@ static luaL_reg lib[] = {
     {NULL, NULL}
 };
 
-luaL_reg* MeshAPI::getLuaReg() {
+luaL_reg *MeshAPI::getLuaReg() {
     return lib;
 }
 
-const char* MeshAPI::getName() {
+const char *MeshAPI::getName() {
     return "OGREMesh";
 }

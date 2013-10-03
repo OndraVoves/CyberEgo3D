@@ -33,11 +33,11 @@
 
 namespace CE3D {
 
-class SceneNodeAPI: public CE3D::Lua::LuaLib {
-public:
-    virtual luaL_reg* getLuaReg();
-    virtual const char* getName();
-};
+    class SceneNodeAPI: public CE3D::Lua::LuaLib {
+        public:
+            virtual luaL_reg *getLuaReg();
+            virtual const char *getName();
+    };
 
 }
 

@@ -33,18 +33,29 @@
 #include <Overlay/OgreFontManager.h>
 
 using namespace CE3D;
+
+Kernel::Kernel()
+: LastMS(0) {
+
+}
+
+Kernel::~Kernel() {
+    shutdown();
+}
+
+
 bool Kernel::init() {
     MainLuaStat.open();
-    MainLuaStat.addPackagePath(";./core/lua/?.lua;./core/components/?.lua");
+    MainLuaStat.addPackagePath ( ";./core/lua/?.lua;./core/components/?.lua" );
 
     // TODO: dynamic
     SceneNodeAPI *scene_node_api = new SceneNodeAPI();
     MeshAPI *mesh_node_api = new MeshAPI();
     CameraAPI *camera_api = new CameraAPI();
 
-    MainLuaStat.registerLib( scene_node_api );
-    MainLuaStat.registerLib( mesh_node_api );
-    MainLuaStat.registerLib( camera_api );
+    MainLuaStat.registerLib ( scene_node_api );
+    MainLuaStat.registerLib ( mesh_node_api );
+    MainLuaStat.registerLib ( camera_api );
 
     //TODO: volitelna cesta... pluginy mozna napevno v programu
     OGRERoot = new Ogre::Root ( "./data/plugins.cfg" );
@@ -90,7 +101,7 @@ bool Kernel::createWindow ( uint width, uint height ) {
     OGREWIndow = OGRERoot->createRenderWindow ( "CyberEg{o.o}rg 3D", width, height, false, &lParams );
 
     Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
-    OGRESceneMgr = OGRERoot->createSceneManager ("OctreeSceneManager");
+    OGRESceneMgr = OGRERoot->createSceneManager ( "OctreeSceneManager" );
 
     OIS::ParamList pl;
     size_t windowHnd = 0;
@@ -110,7 +121,7 @@ bool Kernel::createWindow ( uint width, uint height ) {
 
     updateWindow();
 
-    OGRESceneMgr->setAmbientLight(Ogre::ColourValue(0.5f, 0.5f, 0.5f));
+    OGRESceneMgr->setAmbientLight ( Ogre::ColourValue ( 0.5f, 0.5f, 0.5f ) );
 
     //KeyListener = new KernelKeyListener;
     OISKeyboard->setEventCallback ( this );
@@ -151,56 +162,60 @@ void Kernel::updateWindow() {
 
 
 void Kernel::run() {
-    MainLuaStat.doFile( "./core/main.lua" );
+    MainLuaStat.doFile ( "./core/main.lua" );
 
-    OGRERoot->startRendering();
+    //OGRERoot->startRendering();
+
+    while(1){
+        /* calc d time */
+        ulong ms = OGRERoot->getTimer()->getMilliseconds();
+        ulong d_ms = ms - this->LastMS;
+        this->LastMS = ms;
+
+        /*Tick*/
+        MainLuaStat.callGlobal ( "clientTick", d_ms );
+        MainLuaStat.callGlobal ( "serverTick", d_ms );
+
+        /* rendering */
+        Ogre::WindowEventUtilities::messagePump();
+        OGRERoot->renderOneFrame(  );
+    }
 }
 
-bool Kernel::frameEnded ( const Ogre::FrameEvent& evt )
-{
+bool Kernel::frameEnded ( const Ogre::FrameEvent &evt ) {
     return true;
 }
 
-bool Kernel::frameStarted ( const Ogre::FrameEvent& evt )
-{
+bool Kernel::frameStarted ( const Ogre::FrameEvent &evt ) {
     OISKeyboard->capture();
     OISMouse->capture();
+    return true;
+}
 
-    MainLuaStat.callGlobal( "clientTick", evt.timeSinceLastFrame );
-    MainLuaStat.callGlobal( "serverTick", evt.timeSinceLastFrame );
+bool Kernel::keyPressed ( const OIS::KeyEvent &e ) {
+    MainLuaStat.callGlobal ( "keyPressed" );
 
     return true;
 }
 
-bool Kernel::keyPressed ( const OIS::KeyEvent& e )
-{
-    MainLuaStat.callGlobal( "keyPressed" );
+bool Kernel::keyReleased ( const OIS::KeyEvent &e ) {
+    MainLuaStat.callGlobal ( "keyReleased" );
 
     return true;
 }
 
-bool Kernel::keyReleased ( const OIS::KeyEvent& e )
-{
-    MainLuaStat.callGlobal( "keyReleased" );
+bool Kernel::mouseMoved ( const OIS::MouseEvent &e ) {
+    MainLuaStat.callGlobal ( "mouseMoved" );
 
     return true;
 }
 
-bool Kernel::mouseMoved ( const OIS::MouseEvent& e )
-{
-    MainLuaStat.callGlobal( "mouseMoved" );
-
+bool Kernel::mousePressed ( const OIS::MouseEvent &e, OIS::MouseButtonID id ) {
+    MainLuaStat.callGlobal ( "mousePressed" );
     return true;
 }
 
-bool Kernel::mousePressed ( const OIS::MouseEvent& e, OIS::MouseButtonID id )
-{
-    MainLuaStat.callGlobal( "mousePressed" );
-    return true;
-}
-
-bool Kernel::mouseReleased ( const OIS::MouseEvent& e, OIS::MouseButtonID id )
-{
-    MainLuaStat.callGlobal( "mouseReleased" );
+bool Kernel::mouseReleased ( const OIS::MouseEvent &e, OIS::MouseButtonID id ) {
+    MainLuaStat.callGlobal ( "mouseReleased" );
     return true;
 }

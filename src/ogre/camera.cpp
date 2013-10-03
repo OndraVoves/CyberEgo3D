@@ -31,54 +31,55 @@
 
 using namespace CE3D;
 
-static int create( lua_State *L ) {
+static int create ( lua_State *L ) {
     size_t camera_name_len = 0;
-    const char* camera_name = luaL_checklstring ( L, 1, &camera_name_len );
+    const char *camera_name = luaL_checklstring ( L, 1, &camera_name_len );
 
-    Ogre::SceneNode* node = static_cast<Ogre::SceneNode*>(lua_touserdata(L, 2));
+    Ogre::SceneNode *node = static_cast<Ogre::SceneNode *> ( lua_touserdata ( L, 2 ) );
 
     Kernel::inst().getOGREWIndow()->removeAllViewports();
-    Ogre::Camera *camera = Kernel::inst().getOGRESceneMgr()->createCamera ( camera_name );\
+    Ogre::Camera *camera = Kernel::inst().getOGRESceneMgr()->createCamera ( camera_name );
+    \
     Ogre::Viewport *vp = Kernel::inst().getOGREWIndow()->addViewport ( camera );
     camera->setAspectRatio ( Ogre::Real ( vp->getActualWidth() ) / Ogre::Real ( vp->getActualHeight() ) );
 
-    node->attachObject( camera );
+    node->attachObject ( camera );
 
 
-    lua_pushlightuserdata( L, camera );
+    lua_pushlightuserdata ( L, camera );
     return 1;
 }
 
-static int del( lua_State *L ) {
-    Ogre::Camera* camera = static_cast<Ogre::Camera*>(lua_touserdata(L, 1));
+static int del ( lua_State *L ) {
+    Ogre::Camera *camera = static_cast<Ogre::Camera *> ( lua_touserdata ( L, 1 ) );
     delete camera;
     return 0;
 }
 
-static int setNear( lua_State *L ) {
-    Ogre::Camera* camera = static_cast<Ogre::Camera*>(lua_touserdata(L, 1));
-    float near = luaL_checknumber( L, 2 );
+static int setNear ( lua_State *L ) {
+    Ogre::Camera *camera = static_cast<Ogre::Camera *> ( lua_touserdata ( L, 1 ) );
+    float near = luaL_checknumber ( L, 2 );
 
-    camera->setNearClipDistance( near );
+    camera->setNearClipDistance ( near );
     return 0;
 }
 
-static int setFar( lua_State *L ) {
-    Ogre::Camera* camera = static_cast<Ogre::Camera*>(lua_touserdata(L, 1));
-    float far = luaL_checknumber( L, 2 );
+static int setFar ( lua_State *L ) {
+    Ogre::Camera *camera = static_cast<Ogre::Camera *> ( lua_touserdata ( L, 1 ) );
+    float far = luaL_checknumber ( L, 2 );
 
-    camera->setFarClipDistance( far );
+    camera->setFarClipDistance ( far );
     return 0;
 }
 
-static int setLookAt( lua_State *L ) {
-    Ogre::Camera* camera = static_cast<Ogre::Camera*>(lua_touserdata(L, 1));
+static int setLookAt ( lua_State *L ) {
+    Ogre::Camera *camera = static_cast<Ogre::Camera *> ( lua_touserdata ( L, 1 ) );
 
-    float x = luaL_checknumber( L, 2 );
-    float y = luaL_checknumber( L, 3 );
-    float z = luaL_checknumber( L, 4 );
+    float x = luaL_checknumber ( L, 2 );
+    float y = luaL_checknumber ( L, 3 );
+    float z = luaL_checknumber ( L, 4 );
 
-    camera->lookAt( x, y, z );
+    camera->lookAt ( x, y, z );
     return 0;
 }
 
@@ -92,10 +93,10 @@ static luaL_reg lib[] = {
     {NULL, NULL}
 };
 
-luaL_reg* CameraAPI::getLuaReg() {
+luaL_reg *CameraAPI::getLuaReg() {
     return lib;
 }
 
-const char* CameraAPI::getName() {
+const char *CameraAPI::getName() {
     return "OGRECamera";
 }
