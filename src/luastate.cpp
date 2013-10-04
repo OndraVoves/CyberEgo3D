@@ -96,7 +96,7 @@ void LuaState::callGlobal ( const char *name, float value ) {
 }
 
 void LuaState::callRef ( int ref ) {
-    lua_rawgeti( this->pState, LUA_REGISTRYINDEX, ref );
+    lua_rawgeti ( this->pState, LUA_REGISTRYINDEX, ref );
 
     if ( lua_pcall ( this->pState, 0, 0, 0 ) != 0 ) {
         fprintf ( stderr, "error running function : %s\n",
@@ -105,7 +105,7 @@ void LuaState::callRef ( int ref ) {
 }
 
 void LuaState::callRef ( int ref, float value ) {
-    lua_rawgeti( this->pState, LUA_REGISTRYINDEX, ref );
+    lua_rawgeti ( this->pState, LUA_REGISTRYINDEX, ref );
 
     lua_pushnumber ( this->pState, value );
 
@@ -116,7 +116,7 @@ void LuaState::callRef ( int ref, float value ) {
 }
 
 void LuaState::callRef ( int ref, int value ) {
-    lua_rawgeti( this->pState, LUA_REGISTRYINDEX, ref );
+    lua_rawgeti ( this->pState, LUA_REGISTRYINDEX, ref );
 
     lua_pushinteger ( this->pState, value );
 
@@ -127,17 +127,31 @@ void LuaState::callRef ( int ref, int value ) {
 }
 
 
-
-int LuaState::getGlobalRef ( const char* name ) {
+int LuaState::getGlobalRef ( const char *name ) {
     lua_getglobal ( this->pState, name );
 
-    int r = luaL_ref( this->pState, LUA_REGISTRYINDEX );
+    int r = luaL_ref ( this->pState, LUA_REGISTRYINDEX );
 
     return r;
 }
 
+int LuaState::getTableItemRef ( int table_ref, const char *item ) {
+    lua_rawgeti ( this->pState, LUA_REGISTRYINDEX, table_ref );
 
-void LuaState::registerLib ( LuaLib *lib ) {
-    luaL_openlib ( this->pState, lib->getName(), lib->getLuaReg(), 0 );
+    lua_pushstring ( this->pState, item );
+    lua_gettable ( this->pState, -2 );
+
+    int r = luaL_ref ( this->pState, LUA_REGISTRYINDEX );
+    return r;
 }
 
+
+void LuaState::removeRef ( int ref ) {
+    luaL_unref( this->pState, LUA_REGISTRYINDEX, ref );
+}
+
+
+void LuaState::createGlobalTable ( const char *name ) {
+    lua_newtable ( this->pState );
+    lua_setglobal ( this->pState, name );
+}

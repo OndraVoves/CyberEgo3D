@@ -26,19 +26,17 @@
 */
 
 
-#ifndef CE3D_OGRE_SCENENODEAPI_H
-#define CE3D_OGRE_SCENENODEAPI_H
+#ifndef CE3D_MOUSE_H
+#define CE3D_MOUSE_H
 
 #include "../luastate.h"
 
 namespace CE3D {
-
-    class SceneNodeAPI: public CE3D::Lua::LuaLib {
+    class MouseAPI: public CE3D::Lua::LuaLib {
         public:
             virtual void registerTo ( const Lua::LuaState& state );
             virtual const char *getName();
     };
-
 }
 
-#endif // CE3D_OGRE_SCENENODEAPI_H
+#endif // CE3D_MOUSE_H

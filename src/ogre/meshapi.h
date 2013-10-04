@@ -26,17 +26,17 @@
 */
 
 
-#ifndef CE3D_CAMERA_H
-#define CE3D_CAMERA_H
+#ifndef CE3D_MESH_H
+#define CE3D_MESH_H
 
-#include "../lua/luastate.h"
+#include "../luastate.h"
 
 namespace CE3D {
-    class CameraAPI: public CE3D::Lua::LuaLib {
+    class MeshAPI: public CE3D::Lua::LuaLib {
         public:
-            virtual luaL_reg *getLuaReg();
+    virtual void registerTo ( const Lua::LuaState& state );
             virtual const char *getName();
     };
 }
 
-#endif // CE3D_CAMERA_H
+#endif // CE3D_MESH_H

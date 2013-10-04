@@ -26,17 +26,40 @@
 */
 
 
-#ifndef CE3D_MESH_H
-#define CE3D_MESH_H
+#include "meshapi.h"
+#include "../kernel.h"
 
-#include "../lua/luastate.h"
+using namespace CE3D;
 
-namespace CE3D {
-    class MeshAPI: public CE3D::Lua::LuaLib {
-        public:
-            virtual luaL_reg *getLuaReg();
-            virtual const char *getName();
-    };
+static int create ( lua_State *L ) {
+    size_t mesh_file_len = 0;
+    const char *mesh_file = luaL_checklstring ( L, 1, &mesh_file_len );
+
+    Ogre::SceneNode *node = static_cast<Ogre::SceneNode *> ( lua_touserdata ( L, 2 ) );
+
+    Ogre::Entity *ent = Kernel::inst().getOGRESceneMgr()->createEntity ( mesh_file );
+    node->attachObject ( ent );
+
+    lua_pushlightuserdata ( L, ent );
+    return 1;
 }
 
-#endif // CE3D_MESH_H
+static int del ( lua_State *L ) {
+    Ogre::SceneNode *node = static_cast<Ogre::SceneNode *> ( lua_touserdata ( L, 1 ) );
+    delete node;
+    return 0;
+}
+
+static luaL_reg lib[] = {
+    {"new", create },
+    {"del", del },
+    {NULL, NULL}
+};
+
+void MeshAPI::registerTo ( const Lua::LuaState& state ) {
+    luaL_openlib ( state.getLuaState() , this->getName(), lib, 0 );
+}
+
+const char *MeshAPI::getName() {
+    return "OGREMesh";
+}

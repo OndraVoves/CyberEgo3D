@@ -92,8 +92,8 @@ static luaL_reg lib[] = {
     {NULL, NULL}
 };
 
-luaL_reg *SceneNodeAPI::getLuaReg() {
-    return lib;
+void SceneNodeAPI::registerTo ( const Lua::LuaState& state ) {
+    luaL_openlib ( state.getLuaState() , this->getName(), lib, 0 );
 }
 
 const char *SceneNodeAPI::getName() {

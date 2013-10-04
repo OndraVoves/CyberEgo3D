@@ -26,7 +26,7 @@
 */
 
 
-#include "camera.h"
+#include "cameraapi.h"
 #include "../kernel.h"
 
 using namespace CE3D;
@@ -93,9 +93,13 @@ static luaL_reg lib[] = {
     {NULL, NULL}
 };
 
-luaL_reg *CameraAPI::getLuaReg() {
-    return lib;
+
+
+void CameraAPI::registerTo ( const Lua::LuaState& state )
+{
+    luaL_openlib ( state.getLuaState() , this->getName(), lib, 0 );
 }
+
 
 const char *CameraAPI::getName() {
     return "OGRECamera";

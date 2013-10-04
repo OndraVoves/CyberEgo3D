@@ -58,14 +58,15 @@ include_directories(
 # Set sourcefiles. #
 ####################
 SET( CE3D_SRC
-    src/lua/luastate.cpp
+    src/luastate.cpp
     src/kernel.cpp
 
-    src/keyboardapi.cpp
+    src/ois/keyboardapi.cpp
+    src/ois/mouseapi.cpp
 
     src/ogre/scenenodeapi.cpp
-    src/ogre/mesh.cpp
-    src/ogre/camera.cpp
+    src/ogre/meshapi.cpp
+    src/ogre/cameraapi.cpp
 )
 
 SET( CE3D_MAIN_SRC

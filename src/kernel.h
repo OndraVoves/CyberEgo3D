@@ -31,7 +31,7 @@
 
 #include <Ogre.h>
 #include <OIS.h>
-#include "lua/luastate.h"
+#include "luastate.h"
 #include "tsingleton.h"
 
 namespace CE3D {
@@ -77,11 +77,11 @@ namespace CE3D {
                 return this->OGRESceneMgr;
             }
 
-            OIS::Keyboard* getOISKeyboard() {
+            OIS::Keyboard *getOISKeyboard() {
                 return this->OISKeyboard;
             }
 
-            OIS::Mouse* getOISMouse() {
+            OIS::Mouse *getOISMouse() {
                 return this->OISMouse;
             }
 
@@ -89,6 +89,7 @@ namespace CE3D {
             void renderFrame();
 
         private:
+            int LuaCE3DTable;
             int LuaMouseMoved;
             int LuaMousePressed;
             int LuaMouseReleased;

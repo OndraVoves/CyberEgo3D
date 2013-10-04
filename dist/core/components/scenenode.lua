@@ -42,7 +42,6 @@ local function new()
 	end
 
 	function cls:onClientTick( dt )
-		print(dt)
 	end
 
 	function cls:onServerTick( dt )

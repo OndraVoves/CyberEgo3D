@@ -26,40 +26,17 @@
 */
 
 
-#include "mesh.h"
-#include "../kernel.h"
+#ifndef CE3D_KEYBOARD_H
+#define CE3D_KEYBOARD_H
 
-using namespace CE3D;
+#include "../luastate.h"
 
-static int create ( lua_State *L ) {
-    size_t mesh_file_len = 0;
-    const char *mesh_file = luaL_checklstring ( L, 1, &mesh_file_len );
-
-    Ogre::SceneNode *node = static_cast<Ogre::SceneNode *> ( lua_touserdata ( L, 2 ) );
-
-    Ogre::Entity *ent = Kernel::inst().getOGRESceneMgr()->createEntity ( mesh_file );
-    node->attachObject ( ent );
-
-    lua_pushlightuserdata ( L, ent );
-    return 1;
+namespace CE3D {
+    class KeyboardAPI: public CE3D::Lua::LuaLib {
+        public:
+    virtual void registerTo ( const Lua::LuaState& state );
+            virtual const char *getName();
+    };
 }
 
-static int del ( lua_State *L ) {
-    Ogre::SceneNode *node = static_cast<Ogre::SceneNode *> ( lua_touserdata ( L, 1 ) );
-    delete node;
-    return 0;
-}
-
-static luaL_reg lib[] = {
-    {"new", create },
-    {"del", del },
-    {NULL, NULL}
-};
-
-luaL_reg *MeshAPI::getLuaReg() {
-    return lib;
-}
-
-const char *MeshAPI::getName() {
-    return "OGREMesh";
-}
+#endif // CE3D_CAMERA_H

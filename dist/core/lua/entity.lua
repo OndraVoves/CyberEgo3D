@@ -10,7 +10,6 @@ local function new( obj )
 		if not self.attr.name then
 			self:setAttr( name, default_value )
 		end
-
 	end
 	
 	function cls:setAttr( name, value )

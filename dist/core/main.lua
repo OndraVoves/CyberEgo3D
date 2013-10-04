@@ -26,7 +26,7 @@ function main()
 	ent2:setAttr( "mesh_file", "Sinbad.mesh" )
 end
 
-function clientTick( dt )
+function ce3d.clientTick( dt )
 	--print("client:", dt)
 	local dt_s = dt / 1000.0
 	local speed = 50;
@@ -59,12 +59,17 @@ function clientTick( dt )
 		  
 		ent2:setAttr( "position", p )
 	end
+	
+	if Mouse.isButtonDown( 0 ) then
+		print("click!!!!")
+	end
+end
 
-function serverTick( dt )
+function ce3d.serverTick( dt )
 	--print("server:", dt)
 end
 
-function keyPressed( keycode )
+function ce3d.keyPressed( keycode )
 	print("keyPressed: "..keycode)
 	
 	-- Direction
@@ -76,18 +81,18 @@ function keyPressed( keycode )
 	end		
 end
 
-function keyReleased( keycode )
+function ce3d.keyReleased( keycode )
 	--print("keyReleased")
 end
 
-function mouseMoved()
+function ce3d.mouseMoved()
 	--print("moveMoved")
 end
 
-function mousePressed()
+function ce3d.mousePressed()
 	--print("movePressed")
 end
 
-function mouseReleased()
+function ce3d.mouseReleased()
 	--print("moveReleased")
 end

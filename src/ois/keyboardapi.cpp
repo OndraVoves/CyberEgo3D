@@ -26,17 +26,47 @@
 */
 
 
-#ifndef CE3D_KEYBOARD_H
-#define CE3D_KEYBOARD_H
+#include "keyboardapi.h"
+#include "../kernel.h"
 
-#include "./lua/luastate.h"
+using namespace CE3D;
 
-namespace CE3D {
-    class KeyboardAPI: public CE3D::Lua::LuaLib {
-        public:
-            virtual luaL_reg *getLuaReg();
-            virtual const char *getName();
-    };
+
+static int isKeyDown ( lua_State *L ) {
+    OIS::Keyboard *kb = Kernel::inst().getOISKeyboard();
+
+    int keycode = luaL_checkinteger ( L, 1 );
+
+    bool r = kb->isKeyDown ( OIS::KeyCode ( keycode ) );
+
+    lua_pushboolean ( L, r );
+
+    return 1;
 }
 
-#endif // CE3D_CAMERA_H
+static int isModifierDown ( lua_State *L ) {
+    OIS::Keyboard *kb = Kernel::inst().getOISKeyboard();
+
+    int mod = luaL_checkinteger ( L, 1 );
+
+    bool r = kb-> isModifierDown ( OIS::Keyboard::Modifier ( mod ) );
+
+    lua_pushboolean ( L, r );
+
+    return 1;
+}
+
+static luaL_reg lib[] = {
+    {"isKeyDown", isKeyDown},
+    {"isModifierDown", isModifierDown},
+    {NULL, NULL}
+};
+
+void KeyboardAPI::registerTo ( const Lua::LuaState& state )
+{
+    luaL_openlib ( state.getLuaState() , this->getName(), lib, 0 );
+}
+
+const char *KeyboardAPI::getName() {
+    return "Keyboard";
+}

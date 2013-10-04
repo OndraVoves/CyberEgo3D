@@ -26,71 +26,32 @@
 */
 
 
-#ifndef LUASTATE_H
-#define LUASTATE_H
+#include "mouseapi.h"
+#include "../kernel.h"
 
-#include <string>
+using namespace CE3D;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-#include "lua.h"
-#include "lauxlib.h"
-#include "lualib.h"
-#ifdef __cplusplus
-}
-#endif
+static int isButtonDown ( lua_State *L ) {
+    OIS::Mouse *mouse = Kernel::inst().getOISMouse();
 
-namespace CE3D {
-    namespace Lua {
-        class LuaLib {
-            public:
-                virtual luaL_reg *getLuaReg() = 0;
-                virtual const char *getName() = 0;
-        };
+    int btn = luaL_checkinteger ( L, 1 );
 
-        class LuaState {
-            public:
-                LuaState() : pState ( nullptr ) {
-                }
+    bool r = mouse->getMouseState().buttonDown ( OIS::MouseButtonID ( btn ) );
 
-                virtual ~LuaState() {
-                    close();
-                }
-
-                inline bool isOpen() {
-                    return ( pState != nullptr );
-                }
-                inline bool isClose() {
-                    return !isOpen();
-                }
-
-                bool open();
-                void close();
-                bool doFile ( const char *filename );
-                void addPackagePath ( const char *path );
-
-                void callGlobal ( const char *name );
-                void callGlobal ( const char *name, float value );
-
-                void callRef( int ref );
-                void callRef( int ref, int value );
-                void callRef( int ref, float value );
-
-                int getGlobalRef( const char *name );
-
-                void registerLib ( LuaLib *lib );
-
-
-            protected:
-                virtual void initState();
-
-            private:
-                lua_State *pState;
-                std::string LastError;
-        };
-    }
+    lua_pushboolean ( L, r );
+    return 1;
 }
 
+static luaL_reg lib[] = {
+    {"isButtonDown", isButtonDown},
+    {NULL, NULL}
+};
 
-#endif // LUASTATE_H
+void MouseAPI::registerTo ( const Lua::LuaState& state )
+{
+    luaL_openlib ( state.getLuaState() , this->getName(), lib, 0 );
+}
+
+const char *MouseAPI::getName() {
+    return "Mouse";
+}
