@@ -29,6 +29,7 @@
 #include "scenenodeapi.h"
 #include "../kernel.h"
 #include "Ogre.h"
+#include "Euler.h"
 
 using namespace CE3D;
 
@@ -61,13 +62,13 @@ static int setPosition ( lua_State *L ) {
     return 0;
 }
 
-static int setDirection ( lua_State *L ) {
+static int setOrientation ( lua_State *L ) {
     Ogre::SceneNode *node = static_cast<Ogre::SceneNode *> ( lua_touserdata ( L, 1 ) );
     float x = luaL_checknumber ( L, 2 );
     float y = luaL_checknumber ( L, 3 );
     float z = luaL_checknumber ( L, 4 );
 
-    node->setDirection ( Ogre::Vector3 ( x, y, z ) );
+    node->setOrientation( Ogre::Euler( x, y, z ) );
 
     return 0;
 }
@@ -87,15 +88,17 @@ static luaL_reg lib[] = {
     {"new", newSceneNode },
     {"del", delSceneNode },
     {"setPosition", setPosition },
-    {"setDirection", setDirection },
+    {"setOrientation", setOrientation },
     {"setVisible", setVisible },
     {NULL, NULL}
 };
 
-void SceneNodeAPI::registerTo ( const Lua::LuaState& state ) {
-    luaL_openlib ( state.getLuaState() , this->getName(), lib, 0 );
-}
+void SceneNodeAPI::init ( Lua::LuaState& state, const int ce3d_ref )
+{
+    state.rawGetI( LUA_REGISTRYINDEX, ce3d_ref );
 
-const char *SceneNodeAPI::getName() {
-    return "OGRESceneNode";
+    state.createTable( 0, 0);
+    state.rregister( 0, lib );
+
+    state.setField( -2, "OGRESceneNode" );
 }

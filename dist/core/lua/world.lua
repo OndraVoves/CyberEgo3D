@@ -34,7 +34,21 @@ local function new()
 		return self.entities[id]
 	end
 
+	function cls:clientTick( dt )
+		for i,v in ipairs( self.entities ) do
+			for k, v in pairs( v.components ) do
+				v:onClientTick( dt )
+			end
+		end			
+	end
 	
+	function cls:serverTick( dt )
+		for i,v in ipairs( self.entities ) do
+			for k, v in pairs( v.components ) do
+				v:onServerTick( dt )
+			end
+		end			
+	end		
 	-- Class end		
 	local mt = { __index=cls }
 	return setmetatable( cls, mt)

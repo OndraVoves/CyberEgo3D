@@ -89,7 +89,10 @@ namespace CE3D {
             void renderFrame();
 
         private:
+            int LuaCETable;
+
             int LuaCE3DTable;
+
             int LuaMouseMoved;
             int LuaMousePressed;
             int LuaMouseReleased;
@@ -102,6 +105,8 @@ namespace CE3D {
 
 
             void initMainLuaRef();
+
+            void initMainState();
 
         private:
             Ogre::Root         *OGRERoot;

@@ -42,16 +42,17 @@ static int isButtonDown ( lua_State *L ) {
     return 1;
 }
 
+
 static luaL_reg lib[] = {
     {"isButtonDown", isButtonDown},
     {NULL, NULL}
 };
 
-void MouseAPI::registerTo ( const Lua::LuaState& state )
-{
-    luaL_openlib ( state.getLuaState() , this->getName(), lib, 0 );
-}
+void MouseAPI::init ( Lua::LuaState& state, const int ce3d_ref ) {
+    state.rawGetI( LUA_REGISTRYINDEX, ce3d_ref );
 
-const char *MouseAPI::getName() {
-    return "Mouse";
+    state.createTable( 0, 0);
+    state.rregister( 0, lib );
+
+    state.setField( -2, "mouse" );
 }

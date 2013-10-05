@@ -16,13 +16,13 @@ local function new()
 		
 		if ent and ent.data.camera ~= nil then
 			if name == "look_at" then
-				OGRECamera.setLookAt( ent.data.camera, new[1], new[2], new[3] )
+				CE3D.OGRECamera.setLookAt( ent.data.camera, new[1], new[2], new[3] )
 				
 			elseif name == "near_clip" then
-				OGRECamera.setNear( ent.data.camera, new )
+				CE3D.OGRECamera.setNear( ent.data.camera, new )
 			
 			elseif name == "far_clip" then
-				OGRECamera.setFar( ent.data.camera, new )
+				CE3D.OGRECamera.setFar( ent.data.camera, new )
 				
 			end
 		end
@@ -32,7 +32,7 @@ local function new()
 		-- TODO: zrusit data v prechozi entite
 		self.entity = ent
 
-		ent.data.camera = OGRECamera.new( ent.name.."_Camera", ent.data.scenenode )
+		ent.data.camera = CE3D.OGRECamera.new( ent.name.."_Camera", ent.data.scenenode )
 		
 		ent:initAttr( "look_at", { 0.0, 0.0, 0.0 } )
 		ent:initAttr( "near_clip", 0.01 )
@@ -61,7 +61,8 @@ local function serverTick( dt )
 end
 
 
-return { new=new,
-		 clientTick=clientTick,
-		 serverTick=serverTick,
-	   } 
+return { 
+	new=new,
+	clientTick=clientTick,
+	serverTick=serverTick,
+} 

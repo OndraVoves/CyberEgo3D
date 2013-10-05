@@ -93,14 +93,12 @@ static luaL_reg lib[] = {
     {NULL, NULL}
 };
 
+void CameraAPI::init ( Lua::LuaState& state, const int ce3d_ref ) {
+    state.rawGetI( LUA_REGISTRYINDEX, ce3d_ref );
 
+    state.createTable( 0, 0);
+    state.rregister( 0, lib );
 
-void CameraAPI::registerTo ( const Lua::LuaState& state )
-{
-    luaL_openlib ( state.getLuaState() , this->getName(), lib, 0 );
+    state.setField( -2, "OGRECamera" );
 }
 
-
-const char *CameraAPI::getName() {
-    return "OGRECamera";
-}

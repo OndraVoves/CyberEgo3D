@@ -56,10 +56,12 @@ static luaL_reg lib[] = {
     {NULL, NULL}
 };
 
-void MeshAPI::registerTo ( const Lua::LuaState& state ) {
-    luaL_openlib ( state.getLuaState() , this->getName(), lib, 0 );
-}
 
-const char *MeshAPI::getName() {
-    return "OGREMesh";
+void MeshAPI::init ( Lua::LuaState& state, const int ce3d_ref ) {
+    state.rawGetI( LUA_REGISTRYINDEX, ce3d_ref );
+
+    state.createTable( 0, 0);
+    state.rregister( 0, lib );
+
+    state.setField( -2, "OGREMesh" );
 }

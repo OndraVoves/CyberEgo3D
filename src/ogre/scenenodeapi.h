@@ -35,8 +35,7 @@ namespace CE3D {
 
     class SceneNodeAPI: public CE3D::Lua::LuaLib {
         public:
-            virtual void registerTo ( const Lua::LuaState& state );
-            virtual const char *getName();
+            virtual void init ( Lua::LuaState& state, const int ce3d_ref );
     };
 
 }

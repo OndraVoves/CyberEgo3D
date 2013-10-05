@@ -56,7 +56,8 @@ Kernel::~Kernel() {
 
 
 bool Kernel::init() {
-    MainLuaStat.open();
+    initMainState();
+    //MainLuaStat.open();
     MainLuaStat.addPackagePath ( ";./core/lua/?.lua;./core/components/?.lua" );
     MainLuaStat.createGlobalTable ( "ce3d" );
 
@@ -67,11 +68,11 @@ bool Kernel::init() {
     KeyboardAPI *k_api = new KeyboardAPI();
     MouseAPI *mouse_api = new MouseAPI();
 
-    scene_node_api->registerTo( MainLuaStat );
-    mesh_node_api->registerTo( MainLuaStat );
-    camera_api->registerTo( MainLuaStat );
-    k_api->registerTo( MainLuaStat );
-    mouse_api->registerTo( MainLuaStat );
+    scene_node_api->init( MainLuaStat, LuaCETable );
+    mesh_node_api->init( MainLuaStat, LuaCETable );
+    camera_api->init( MainLuaStat, LuaCETable );
+    k_api->init( MainLuaStat, LuaCETable );
+    mouse_api->init( MainLuaStat, LuaCETable );
 
     //TODO: volitelna cesta... pluginy mozna napevno v programu
     OGRERoot = new Ogre::Root ( "./data/plugins.cfg" );
@@ -248,4 +249,18 @@ void Kernel::initMainLuaRef() {
 
 //    this->LuaFrameStarted = MainLuaStat.getGlobalRef( "FrameStarted"  );
 //    this->LuaFrameEnded = MainLuaStat.getGlobalRef( "FrameEnded"  );
+}
+
+
+void Kernel::initMainState() {
+    if( !MainLuaStat.open() ) {
+        return;
+    }
+
+    /*create ce3d table*/
+    MainLuaStat.createTable( 0, 0 );
+    MainLuaStat.setGlobal( "CE3D" );
+
+    MainLuaStat.getGlobal( "CE3D" );
+    LuaCETable = MainLuaStat.ref();
 }

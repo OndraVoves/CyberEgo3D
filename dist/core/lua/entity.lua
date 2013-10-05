@@ -11,7 +11,7 @@ local function new( obj )
 			self:setAttr( name, default_value )
 		end
 	end
-	
+		
 	function cls:setAttr( name, value )
 		local old = self.attr[name]
 		self.attr[name] = value

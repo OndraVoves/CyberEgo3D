@@ -18,7 +18,7 @@ local function new()
 			if name == "mesh_file" then
 				--todo delete
 				if #new ~= 0 then
-					ent.data.mesh = OGREMesh.new( ent.attr.mesh_file, ent.data.scenenode )
+					ent.data.mesh = CE3D.OGREMesh.new( ent.attr.mesh_file, ent.data.scenenode )
 				end
 			end
 		end

@@ -145,7 +145,6 @@ int LuaState::getTableItemRef ( int table_ref, const char *item ) {
     return r;
 }
 
-
 void LuaState::removeRef ( int ref ) {
     luaL_unref( this->pState, LUA_REGISTRYINDEX, ref );
 }

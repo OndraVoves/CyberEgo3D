@@ -3,8 +3,10 @@ if _G.SceneNodeComponent == nil then
 end
 
 local function new()
-	cls = { types="SceneNode",
-		entity=nil }
+	cls = {
+		types="SceneNode",
+		entity=nil
+	}
 
 	local mt = { __index=cls }
 	setmetatable( cls, mt)
@@ -14,15 +16,15 @@ local function new()
 	function cls:onAttrChange( name, old, new )
 		if self.entity.data.scenenode ~= nil then
 			if name == "position" then
-				OGRESceneNode.setPosition( self.entity.data.scenenode,
+				CE3D.OGRESceneNode.setPosition( self.entity.data.scenenode,
 				new[1], new[2], new[3] )
 				
-			elseif name == "direction" then
-				OGRESceneNode.setDirection( self.entity.data.scenenode,
+			elseif name == "orientation" then
+				CE3D.OGRESceneNode.setOrientation( self.entity.data.scenenode,
 				new[1], new[2], new[3] )
 				
 			elseif name == "visible" then
-				OGRESceneNode.setVisible( self.entity.data.scenenode,
+				CE3D.OGRESceneNode.setVisible( self.entity.data.scenenode,
 				new )
 			end
 		end
@@ -35,10 +37,10 @@ local function new()
 
 		ent:initAttr( "scene_node_name", ent.name )
 		ent:initAttr( "position", {0.0, 0.0, 0.0} )
-		ent:initAttr( "direction", {0.0, 0.0, 0.0} )
+		ent:initAttr( "orientation", {0.0, 0.0, 0.0} )
 		ent:initAttr( "visible", true )
 
-		ent.data.scenenode = OGRESceneNode.new( ent.attr.scene_node_name )
+		ent.data.scenenode = CE3D.OGRESceneNode.new( ent.attr.scene_node_name )
 	end
 
 	function cls:onClientTick( dt )
@@ -63,7 +65,8 @@ local function serverTick( dt )
 end
 
 
-return { new=new,
+return {
+	new=new,
 	clientTick=clientTick,
 	serverTick=serverTick,
 }
