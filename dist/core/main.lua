@@ -16,7 +16,37 @@ function script1:onEntityChange( ent )
 end
 
 function script1:onClientTick( dt )
-	print( dt )
+	local dt_s = dt / 1000.0
+	local speed = 50;
+	
+	-- Position
+	if CE3D.keyb.isKeyDown( 17 ) then
+		local p = self.attr.position;
+		p[3] = p[3] + (speed*dt_s)
+		  
+		self:setAttr( "position", p )
+	end				
+				
+	if CE3D.keyb.isKeyDown( 31 ) then
+		local p = self.attr.position;
+		p[3] = p[3] - (speed*dt_s)
+		  
+		self:setAttr( "position", p )
+	end
+	
+	if CE3D.keyb.isKeyDown( 30 ) then
+		local p = self.attr.position;
+		p[1] = p[1] - (speed*dt_s)
+		  
+		self:setAttr( "position", p )
+	end
+	
+	if CE3D.keyb.isKeyDown( 32 ) then
+		local p = ent2.attr.position;
+		p[1] = p[1] + (speed*dt_s)
+		  
+		self:setAttr( "position", p )
+	end	
 end
 
 function script1:onServerTick( dt )
@@ -46,39 +76,6 @@ end
 
 function ce3d.clientTick( dt )
 	world:clientTick(dt)
-
-	--print("client:", dt)
-	local dt_s = dt / 1000.0
-	local speed = 50;
-	
-	-- Position
-	if CE3D.keyb.isKeyDown( 17 ) then
-		local p = ent2.attr.position;
-		p[3] = p[3] + (speed*dt_s)
-		  
-		ent2:setAttr( "position", p )
-	end				
-				
-	if CE3D.keyb.isKeyDown( 31 ) then
-		local p = ent2.attr.position;
-		p[3] = p[3] - (speed*dt_s)
-		  
-		ent2:setAttr( "position", p )
-	end
-	
-	if CE3D.keyb.isKeyDown( 30 ) then
-		local p = ent2.attr.position;
-		p[1] = p[1] - (speed*dt_s)
-		  
-		ent2:setAttr( "position", p )
-	end
-	
-	if CE3D.keyb.isKeyDown( 32 ) then
-		local p = ent2.attr.position;
-		p[1] = p[1] + (speed*dt_s)
-		  
-		ent2:setAttr( "position", p )
-	end
 end
 
 function ce3d.serverTick( dt )
