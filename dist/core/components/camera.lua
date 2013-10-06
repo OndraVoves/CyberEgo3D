@@ -1,15 +1,9 @@
-if _G.CameraComponent == nil then
-	_G.CameraComponent = {}
-end
-
 local function new()
 	cls = { types="Camera",
 			entity=nil }
 	
 	local mt = { __index=cls.__index }
 	setmetatable( cls, mt)
-	
-	_G.CameraComponent[#_G.CameraComponent+1] = cls
 	
 	function cls:onAttrChange( name, old, new )
 		local ent = self.entity
@@ -48,21 +42,4 @@ local function new()
 	return cls
 end
 
-local function clientTick( dt )
-	for i, c in ipairs( _G.CameraComponent ) do
-		c:onClientTick( dt )
-	end
-end
-
-local function serverTick( dt )
-	for i, c in ipairs(_G.CameraComponent ) do
-		c:onServerTick( dt )
-	end
-end
-
-
-return { 
-	new=new,
-	clientTick=clientTick,
-	serverTick=serverTick,
-} 
+ce3d.Components.Camera = new

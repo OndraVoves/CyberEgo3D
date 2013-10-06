@@ -1,10 +1,6 @@
 local World = require( "world" )
 local Entity = require( "entity" )
 
-local CSceneNode = require( "scenenode" )
-local CMesh		 = require( "mesh" )
-local CCamera    = require( "camera" )
-
 script1 = {
 	types="script",
 }
@@ -57,17 +53,37 @@ local w = World()
 function w:onLoad()
 	ent1 = self:addEntity( {
 		name="ssss",
-		components={ CSceneNode.new(), CCamera.new() }
+		components={ "SceneNode", "Camera" }
 	} )
 	
 
-	ent2 = self:addEntity( { 
-		components={ CSceneNode.new(), CMesh.new(), script1 }
+	ent2 = self:addEntity( {
+		components={ "SceneNode", "Mesh" } 
 	})
 	
-	ent1:setAttr( "position", { 0, 0, 150 } )
-	ent2:setAttr( "position", { 0, 0, 100 } )
-	ent2:setAttr( "mesh_file", "Sinbad.mesh" )
+	ent1:setAttr("position", { 0, 0, 150 } )
+	ent2:setAttr("position", { 0, 0, 101 } )
+	ent2:setAttr("mesh_file", "Sinbad.mesh" )
+
+	print( self:toJSON() )
+
+--	local file = io.open("ent2.json", "w")
+--	file:write(ent2:toJSON())
+--	file:close()
+--	
+--	file = io.open( "ent2.json", "r" )
+--	local json = file:read("*all")
+--	
+--	print ( json )
+--	local j = require( "json" )
+--	local d = j.decode
+--	e = d( json )
+--	e.name = "dsadasdasd"
+--	ent3 = self:addEntity( e )
+--	ent3:setAttr( "position", { 10, 0, 100 } )
+--	print( ent3:toJSON() )
+
+
 end
 
 return w

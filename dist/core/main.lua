@@ -1,24 +1,11 @@
 function main()
 	print( "main" )
 	
+	-- Components factory
+	ce3d.Components = { }
+	
 	ce3d.game = require( 'game' )
 	ce3d.game:onLoad()
-	
--- 	world = World()
---	
---	ent1 = world:addEntity( {
---		name="ssss",
---		components={ CSceneNode.new(), CCamera.new() }
---	} )
---	
---
---	ent2 = world:addEntity( { 
---		components={ CSceneNode.new(), CMesh.new(), script1 }
---	})
---	
---	ent1:setAttr( "position", { 0, 0, 150 } )
---	ent2:setAttr( "position", { 0, 0, 100 } )
---	ent2:setAttr( "mesh_file", "Sinbad.mesh" )
 end
 
 function ce3d.clientTick( dt )

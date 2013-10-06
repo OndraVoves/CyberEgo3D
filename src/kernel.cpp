@@ -58,10 +58,6 @@ Kernel::~Kernel() {
 bool Kernel::init() {
     initMainState();
     //MainLuaStat.open();
-    MainLuaStat.addPackagePath ( ";./core/lua/?.lua;./core/components/?.lua" );
-    MainLuaStat.addPackagePath ( ";./game/?.lua" );
-    MainLuaStat.addPackagePath ( ";./game/levels/?.lua" );
-    MainLuaStat.createGlobalTable ( "ce3d" );
 
     // TODO: dynamic
     SceneNodeAPI *scene_node_api = new SceneNodeAPI();
@@ -259,7 +255,14 @@ void Kernel::initMainState() {
         return;
     }
 
+    MainLuaStat.addPackagePath ( ";./core/lua/?.lua;./core/components/?.lua" );
+    MainLuaStat.addPackagePath ( ";./game/?.lua" );
+    MainLuaStat.addPackagePath ( ";./game/levels/?.lua" );
+
+    MainLuaStat.createGlobalTable ( "ce3d" );
+
     /*create ce3d table*/
+
     MainLuaStat.createTable( 0, 0 );
     MainLuaStat.setGlobal( "CE3D" );
 
