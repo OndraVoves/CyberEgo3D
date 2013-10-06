@@ -17,12 +17,11 @@ local function new()
 		local entity = Entity( ent )
 		
 		self.entities[count] = entity
-		
-		for k,v in pairs(entity.components) do
-			if v.onEntityChange ~= nil then
-				v:onEntityChange( entity )
-			end
-		end	
+
+		local components = entity.components
+		for i=1, #components do
+			components[i]:onEntityChange( entity )
+		end
 		
 		return entity
 	end
