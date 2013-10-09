@@ -45,6 +45,12 @@ extern "C" {
         return camera;
     }
 
+    void camera_del ( void *camera ) {
+        Ogre::Camera *c = static_cast<Ogre::Camera *> ( camera );
+        Kernel::inst().getOGRESceneMgr()->destroyCamera( c );
+    }
+
+
     void camera_setFar ( void *camera, float far ) {
         Ogre::Camera *c = static_cast<Ogre::Camera *> ( camera );
         c->setFarClipDistance ( far );

@@ -1,0 +1,56 @@
+[
+	{
+		"attributes": {
+			"visible": true,
+			"mesh": "Sinbad.mesh",
+			"position": [0, 10, 100],
+			"orientation": [0, 0, 0]
+		},
+		"class": "Sinbad",
+		"name": "NoName333",
+		"components": ["SceneNode", "Mesh"]
+	} , {
+		"attributes": {
+			"visible": true,
+			"mesh": "Sinbad.mesh",
+			"position": [0, 0, 100],
+			"orientation": [0, 0, 0]
+		},
+		"class": "Sinbad",
+		"name": "NoName",
+		"components": ["SceneNode", "Mesh"]
+	} , {
+		"attributes": {
+			"Far": 5000,
+			"position": [0, 0, 140],
+			"far": 5000,
+			"visible": true,
+			"look_at": [0, 0, 0],
+			"near": 0.01,
+			"orientation": [0, 0, 0]
+		},
+		"class": "Player",
+		"name": "NoName",
+		"components": ["SceneNode", "Camera"]
+	} , {
+		"attributes": {
+			"visible": true,
+			"mesh": "Sinbad.mesh",
+			"position": [-2, 0, 100],
+			"orientation": [0, 0, 0]
+		},
+		"class": "Sinbad",
+		"name": "NoName2",
+		"components": ["SceneNode", "Mesh"]
+	}, {
+		"attributes": {
+			"visible": false,
+			"mesh": "Sinbad.mesh",
+			"position": [10, 0, 100],
+			"orientation": [0, 0, 0]
+		},
+		"class": "Sinbad",
+		"name": "NoName3",
+		"components": ["SceneNode", "Mesh"]
+	}
+]

@@ -100,8 +100,8 @@ namespace CE3D {
             int LuaKeyReleased;
             int LuaFrameStarted;
             int LuaFrameEnded;
-            int LuaClientTick;
-            int LuaServerTick;
+            int LuaUpdate;
+//            int LuaServerTick;
 
 
             void initMainLuaRef();

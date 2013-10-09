@@ -2,6 +2,7 @@ local ffi = require("ffi")
 local C = ffi.C
 ffi.cdef[[
 	void* camera_new( const char* name, void* scene_node );
+	void camera_del( void* camera );
 	void camera_setFar( void* camera, float far );
 	void camera_setNear( void* camera, float near );
 	void camera_setLookAt( void* camera, float x, float y, float z );
@@ -63,6 +64,10 @@ local function new()
 		ent:setLookAt( attr.look_at )
 		ent:setFar( attr.far )
 		ent:setNear( attr.near )				
+	end
+	
+	function cls:onDestroy()
+		C.camera_del( self._ent.data.camera )
 	end
 	
 	return cls

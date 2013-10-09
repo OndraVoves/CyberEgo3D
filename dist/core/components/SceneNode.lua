@@ -2,6 +2,7 @@ local ffi = require("ffi")
 local C = ffi.C
 ffi.cdef[[
 	void* scenenode_new(const char* name);
+	void scenenode_del(void* node);
 	void  scenenode_setPosition( void* node, float x, float y, float z );
 	void  scenenode_setOrientation( void* node, float x, float y, float z );
 	void  scenenode_setVisible( void* node, bool visible );
@@ -63,8 +64,12 @@ local function new()
 		local attr = self._ent.attributes
 		ent:setPosition( attr.position )
 		ent:setOrientation( attr.orientation )
-		ent:setVisible( attr.visible )				
+		--ent:setVisible( attr.visible )				
 	end
+
+	function cls:onDestroy()
+		C.scenenode_del( self._ent.data.scenenode )
+	end	
 
 	return cls
 end

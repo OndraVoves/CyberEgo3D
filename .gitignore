@@ -10,3 +10,7 @@ ce3d
 *.out*
 .buildpath
 *.so
+.settings
+.settings
+cd
+/home/ondra/Projects/CyberEgo3D/cmake

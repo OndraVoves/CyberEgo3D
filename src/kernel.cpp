@@ -42,9 +42,7 @@ Kernel::Kernel()
       LuaKeyReleased ( -1 ),
       LuaFrameStarted ( -1 ),
       LuaFrameEnded ( -1 ),
-      LuaClientTick ( -1 ),
-      LuaServerTick ( -1 ) {
-
+      LuaUpdate ( -1 ) {
 }
 
 Kernel::~Kernel() {
@@ -174,14 +172,11 @@ void Kernel::run() {
         ulong d_ms = ms - this->LastMS;
         this->LastMS = ms;
 
-        /*Tick*/
-        MainLuaStat.callRef ( this->LuaClientTick, ( int ) d_ms );
-        MainLuaStat.callRef ( this->LuaServerTick, ( int ) d_ms );
+        /* Tick */
+        MainLuaStat.callRef ( this->LuaUpdate, ( int ) d_ms );
 
-        /* rendering */
-        renderFrame();
-
-        //printf( "while time: %u\n", d_ms );
+        /* Rendering */
+        renderFrame( );
     }
 }
 
@@ -234,8 +229,9 @@ void Kernel::initMainLuaRef() {
     this->LuaKeyPressed = MainLuaStat.getTableItemRef ( this->LuaCE3DTable, "keyPressed" );
     this->LuaKeyReleased = MainLuaStat.getTableItemRef ( this->LuaCE3DTable, "keyReleased"  );
 
-    this->LuaClientTick =  MainLuaStat.getTableItemRef ( this->LuaCE3DTable, "clientTick"  );
-    this->LuaServerTick =  MainLuaStat.getTableItemRef ( this->LuaCE3DTable, "serverTick"  );
+    this->LuaUpdate = MainLuaStat.getTableItemRef ( this->LuaCE3DTable, "update" );
+
+//    this->LuaServerTick =  MainLuaStat.getTableItemRef ( this->LuaCE3DTable, "serverTick"  );
 
 //    this->LuaFrameStarted = MainLuaStat.getGlobalRef( "FrameStarted"  );
 //    this->LuaFrameEnded = MainLuaStat.getGlobalRef( "FrameEnded"  );
