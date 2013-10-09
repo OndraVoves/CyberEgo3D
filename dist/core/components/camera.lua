@@ -1,45 +1,71 @@
+local ffi = require("ffi")
+local C = ffi.C
+ffi.cdef[[
+	void* camera_new( const char* name, void* scene_node );
+	void camera_setFar( void* camera, float far );
+	void camera_setNear( void* camera, float near );
+	void camera_setLookAt( void* camera, float x, float y, float z );
+]] 
+	
+
 local function new()
-	cls = { types="Camera",
-			entity=nil }
+	local cls = {
+		types="Camera",
+	}
 	
 	local mt = { __index=cls.__index }
 	setmetatable( cls, mt)
-	
-	function cls:onAttrChange( name, old, new )
-		local ent = self.entity
 		
-		if ent and ent.data.camera ~= nil then
-			if name == "look_at" then
-				CE3D.OGRECamera.setLookAt( ent.data.camera, new[1], new[2], new[3] )
-				
-			elseif name == "near_clip" then
-				CE3D.OGRECamera.setNear( ent.data.camera, new )
-			
-			elseif name == "far_clip" then
-				CE3D.OGRECamera.setFar( ent.data.camera, new )
-				
-			end
+	-- Look At
+	local ent_api = {}
+	function ent_api:setLookAt( value )
+		self.attributes.look_at = value
+		C.camera_setLookAt( self.data.camera,
+							value[1], value[2], value[3] )
+	end
+
+	function ent_api:getLookAt()
+		return self.attributes.look_at
+	end
+
+	-- Near
+	function ent_api:setNear( v )
+		self.attributes.near = v
+		C.camera_setNear( self.data.camera, v )
+	end
+	
+	function ent_api:getNear( v )
+		return self.attributes.near
+	end
+
+	-- Near
+	function ent_api:setFar( v )
+		self.attributes.Far = v
+		C.camera_setFar( self.data.camera, v )
+	end
+	
+	function ent_api:getFar( v )
+		return self.attributes.Far
+	end
+
+
+	function cls:onInit( ent_id )
+		local ent = EntitySystem[ ent_id ]
+		self._ent = ent
+		ent.data.camera =  C.camera_new( "C"..tostring( ent_id ), ent.data.scenenode )
+		
+		--inject api
+		for k, v in pairs( ent_api ) do
+			ent[k] = v
 		end
+				
+		local attr = self._ent.attributes
+		ent:setLookAt( attr.look_at )
+		ent:setFar( attr.far )
+		ent:setNear( attr.near )				
 	end
-	
-	function cls:onEntityChange( ent )
-		-- TODO: zrusit data v prechozi entite
-		self.entity = ent
-
-		ent.data.camera = CE3D.OGRECamera.new( ent.name.."_Camera", ent.data.scenenode )
-		
-		ent:initAttr( "look_at", { 0.0, 0.0, 0.0 } )
-		ent:initAttr( "near_clip", 0.01 )
-		ent:initAttr( "far_clip", 5000 )
-	end
-
-	function cls:onClientTick( dt )
-	end	
-	
-	function cls:onServerTick( dt )
-	end		
 	
 	return cls
 end
 
-ce3d.Components.Camera = new
+ComponentsFactory:register( "Camera", new )

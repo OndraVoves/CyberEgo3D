@@ -9,3 +9,4 @@ ce3d
 *.log
 *.out*
 .buildpath
+*.so

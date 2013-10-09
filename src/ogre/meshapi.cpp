@@ -26,42 +26,22 @@
 */
 
 
-#include "meshapi.h"
 #include "../kernel.h"
 
 using namespace CE3D;
 
-static int create ( lua_State *L ) {
-    size_t mesh_file_len = 0;
-    const char *mesh_file = luaL_checklstring ( L, 1, &mesh_file_len );
+extern "C" {
+    void *mesh_new ( const char *mesh_file, void *scene_node ) {
+        Ogre::SceneNode *node = static_cast<Ogre::SceneNode *> ( scene_node );
 
-    Ogre::SceneNode *node = static_cast<Ogre::SceneNode *> ( lua_touserdata ( L, 2 ) );
+        Ogre::Entity *ent = Kernel::inst().getOGRESceneMgr()->createEntity ( mesh_file );
+        node->attachObject ( ent );
 
-    Ogre::Entity *ent = Kernel::inst().getOGRESceneMgr()->createEntity ( mesh_file );
-    node->attachObject ( ent );
+        return ent;
+    }
 
-    lua_pushlightuserdata ( L, ent );
-    return 1;
-}
-
-static int del ( lua_State *L ) {
-    Ogre::SceneNode *node = static_cast<Ogre::SceneNode *> ( lua_touserdata ( L, 1 ) );
-    delete node;
-    return 0;
-}
-
-static luaL_reg lib[] = {
-    {"new", create },
-    {"del", del },
-    {NULL, NULL}
-};
-
-
-void MeshAPI::init ( Lua::LuaState& state, const int ce3d_ref ) {
-    state.rawGetI( LUA_REGISTRYINDEX, ce3d_ref );
-
-    state.createTable( 0, 0);
-    state.rregister( 0, lib );
-
-    state.setField( -2, "OGREMesh" );
+    void mesh_del( void* mesh ) {
+        Ogre::Entity *e = static_cast<Ogre::Entity *> ( mesh );
+        delete e;
+    }
 }

@@ -1,38 +1,45 @@
+local ffi = require("ffi")
+local C = ffi.C
+ffi.cdef[[
+	void* mesh_new( const char* name, void* scene_node );
+	void  mesh_del( void *mesh );
+]]
+
+
 local function new()
-	cls = { types="Mesh",
-			entity=nil }
+	local cls = {
+		types="Mesh"
+	}
 	
 	local mt = { __index=cls.__index }
 	setmetatable( cls, mt)
-	
-	function cls:onAttrChange( name, old, new )
-		local ent = self.entity
-		
-		if ent and ent.data.scenenode ~= nil then
-			if name == "mesh_file" then
-				--todo delete
-				if #new ~= 0 then
-					ent.data.mesh = CE3D.OGREMesh.new( ent.attr.mesh_file, ent.data.scenenode )
-				end
-			end
-		end
-	end
-	
-	function cls:onEntityChange( ent )
-		-- TODO: zrusit data v prechozi entite
-		self.entity = ent
-		
-		ent:initAttr( "mesh_file", "" )
+
+
+	-- Mesh
+	local ent_api = {}
+	function ent_api:setMesh( value )
+		self.data.mesh = C.mesh_new( value, self.data.scenenode )
+		self.attributes.mesh = value
 	end
 
-	function cls:onClientTick( dt )
-	end	
+	function ent_api:getMesh()
+		return self.attributes.mesh
+	end
 	
-	function cls:onServerTick( dt )
-	end		
+	function cls:onInit( ent_id )
+		local ent = EntitySystem[ ent_id ]
+		self._ent = ent
+		
+		--inject api
+		for k, v in pairs( ent_api ) do
+			ent[k] = v
+		end
+				
+		local attr = self._ent.attributes
+		ent:setMesh( attr.mesh )				
+	end
 	
 	return cls
 end
 
-
-ce3d.Components.Mesh = new
+ComponentsFactory:register( "Mesh", new )

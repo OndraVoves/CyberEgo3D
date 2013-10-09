@@ -62,11 +62,11 @@ static luaL_reg lib[] = {
     {NULL, NULL}
 };
 
-void KeyboardAPI::init ( Lua::LuaState& state, const int ce3d_ref ) {
-    state.rawGetI( LUA_REGISTRYINDEX, ce3d_ref );
+void KeyboardAPI::init ( Lua::LuaState &state, const int ce3d_ref ) {
+    state.rawGetI ( LUA_REGISTRYINDEX, ce3d_ref );
 
-    state.createTable( 0, 0);
-    state.rregister( 0, lib );
+    state.createTable ( 0, 0 );
+    state.rregister ( 0, lib );
 
-    state.setField( -2, "keyb" );
+    state.setField ( -2, "keyb" );
 }

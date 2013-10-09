@@ -34,8 +34,8 @@
 namespace CE3D {
     class KeyboardAPI: public CE3D::Lua::LuaLib {
         public:
-            virtual void init ( Lua::LuaState& state, const int ce3d_ref );
-            };
+            virtual void init ( Lua::LuaState &state, const int ce3d_ref );
+    };
 
 }
 

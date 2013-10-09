@@ -35,7 +35,7 @@ bool LuaState::open() {
         close();
     }
 
-    pState = lua_open();
+    pState = luaL_newstate();
     if ( !pState ) {
         return false;
     }
@@ -146,7 +146,7 @@ int LuaState::getTableItemRef ( int table_ref, const char *item ) {
 }
 
 void LuaState::removeRef ( int ref ) {
-    luaL_unref( this->pState, LUA_REGISTRYINDEX, ref );
+    luaL_unref ( this->pState, LUA_REGISTRYINDEX, ref );
 }
 
 

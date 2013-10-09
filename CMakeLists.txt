@@ -38,19 +38,23 @@ ENDIF( APP_DEBUG )
 #########################
 find_package(Ogre REQUIRED)
 find_package(OIS  REQUIRED)
-find_package(Lua51  REQUIRED)
+#find_package(luajit  REQUIRED)
+
+LINK_DIRECTORIES(${CMAKE_SOURCE_DIR}/3rd/luajit-2.0/src)
 
 SET( LIBS
-    ${LUA_LIBRARIES}
+#    ${LUA_LIBRARIES}
     ${OIS_LIBRARIES}
     ${OGRE_LIBRARIES}
     OgreOverlay
+    luajit
 )
 
 include_directories(
-    ${LUA_INCLUDE_DIR}
+#    ${LUA_INCLUDE_DIR}
     ${OIS_INCLUDE_DIR}
     ${OGRE_INCLUDE_DIR}
+    ${CMAKE_SOURCE_DIR}/3rd/luajit-2.0/src
 )
 
 

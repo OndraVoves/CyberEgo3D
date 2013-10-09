@@ -27,9 +27,6 @@
 
 
 #include "kernel.h"
-#include "ogre/scenenodeapi.h"
-#include "ogre/meshapi.h"
-#include "ogre/cameraapi.h"
 #include "ois/keyboardapi.h"
 #include "ois/mouseapi.h"
 #include <Overlay/OgreFontManager.h>
@@ -60,17 +57,10 @@ bool Kernel::init() {
     //MainLuaStat.open();
 
     // TODO: dynamic
-    SceneNodeAPI *scene_node_api = new SceneNodeAPI();
-    MeshAPI *mesh_node_api = new MeshAPI();
-    CameraAPI *camera_api = new CameraAPI();
     KeyboardAPI *k_api = new KeyboardAPI();
     MouseAPI *mouse_api = new MouseAPI();
-
-    scene_node_api->init( MainLuaStat, LuaCETable );
-    mesh_node_api->init( MainLuaStat, LuaCETable );
-    camera_api->init( MainLuaStat, LuaCETable );
-    k_api->init( MainLuaStat, LuaCETable );
-    mouse_api->init( MainLuaStat, LuaCETable );
+    k_api->init ( MainLuaStat, LuaCETable );
+    mouse_api->init ( MainLuaStat, LuaCETable );
 
     //TODO: volitelna cesta... pluginy mozna napevno v programu
     OGRERoot = new Ogre::Root ( "./data/plugins.cfg" );
@@ -190,6 +180,8 @@ void Kernel::run() {
 
         /* rendering */
         renderFrame();
+
+        //printf( "while time: %u\n", d_ms );
     }
 }
 
@@ -251,7 +243,7 @@ void Kernel::initMainLuaRef() {
 
 
 void Kernel::initMainState() {
-    if( !MainLuaStat.open() ) {
+    if ( !MainLuaStat.open() ) {
         return;
     }
 
@@ -263,9 +255,9 @@ void Kernel::initMainState() {
 
     /*create ce3d table*/
 
-    MainLuaStat.createTable( 0, 0 );
-    MainLuaStat.setGlobal( "CE3D" );
+    MainLuaStat.createTable ( 0, 0 );
+    MainLuaStat.setGlobal ( "CE3D" );
 
-    MainLuaStat.getGlobal( "CE3D" );
+    MainLuaStat.getGlobal ( "CE3D" );
     LuaCETable = MainLuaStat.ref();
 }
