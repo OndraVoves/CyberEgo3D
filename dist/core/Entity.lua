@@ -6,6 +6,15 @@ function new( entity_class )
 		data = {},
 	}
 
+	-- Name
+	function Entity:setName( name )
+		self.name = name
+	end
+	function Entity:getName( name )
+		return self.name
+	end
+
+
 	function Entity:_onSpawn()
 		-- Init components
 		for k, v in pairs( self.components ) do

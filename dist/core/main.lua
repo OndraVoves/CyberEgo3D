@@ -1,11 +1,6 @@
 EntitySystem = require("EntitySystem")
 ComponentsFactory = require("ComponentsFactory")
 
-ce3d.Components = {}
-
-require("components")
-
-
 local EntCls1 = {
 	class = 'class1',
 
@@ -55,8 +50,13 @@ EntitySystem:register( EntCls2 )
 function main()
 	print( "main" )
 	
-	local id1 = EntitySystem:spawn( 'class1' )
-	id2 = EntitySystem:spawn( 'class2' )
+	ComponentsFactory:loadFromDirs( './core/components/' )
+	ComponentsFactory:loadFromDirs( './game/components/' )
+
+--	boot_components()
+	
+	--local id1 = EntitySystem:spawn( 'class1' )
+	--id2 = EntitySystem:spawn( 'class2' )
 	
 	
 		

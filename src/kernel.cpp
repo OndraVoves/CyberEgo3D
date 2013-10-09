@@ -247,9 +247,8 @@ void Kernel::initMainState() {
         return;
     }
 
-    MainLuaStat.addPackagePath ( ";./core/lua/?.lua;./core/components/?.lua" );
+    MainLuaStat.addPackagePath ( ";./core/?.lua" );
     MainLuaStat.addPackagePath ( ";./game/?.lua" );
-    MainLuaStat.addPackagePath ( ";./game/levels/?.lua" );
 
     MainLuaStat.createGlobalTable ( "ce3d" );
 

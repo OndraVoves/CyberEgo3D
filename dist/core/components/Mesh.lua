@@ -42,4 +42,5 @@ local function new()
 	return cls
 end
 
-ComponentsFactory:register( "Mesh", new )
+return new
+--ComponentsFactory:register( "Mesh", new )

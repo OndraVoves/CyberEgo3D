@@ -68,4 +68,5 @@ local function new()
 	return cls
 end
 
-ComponentsFactory:register( "Camera", new )
+return new
+--ComponentsFactory:register( "Camera", new )

@@ -5,8 +5,8 @@ ffi.cdef[[
 	void  scenenode_setPosition( void* node, float x, float y, float z );
 	void  scenenode_setOrientation( void* node, float x, float y, float z );
 	void  scenenode_setVisible( void* node, bool visible );
-]] 
-	
+]]
+
 local function new()
 	local cls = {
 		types="SceneNode",
@@ -69,4 +69,6 @@ local function new()
 	return cls
 end
 
-ComponentsFactory:register( "SceneNode", new )
+return new
+
+--ComponentsFactory:register( "SceneNode", new )
