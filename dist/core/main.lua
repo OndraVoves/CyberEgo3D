@@ -35,6 +35,7 @@ function ce3d.update( dt )
 end
 
 function ce3d.keyPressed( keycode )
+	print( "Keycode", keycode )
 	if keycode == 19 then
 		EntitySystem:reloadFactory()
 			
@@ -57,4 +58,21 @@ function ce3d.mousePressed()
 end
 
 function ce3d.mouseReleased()
+end
+
+function ce3d.clientCall( type, ent_id, cmd, ... )
+	local args = { ... }
+	local e = EntitySystem:getEntity( ent_id )
+	
+	if type == 1 then
+		e.client[cmd]( unpack(args) )
+	else
+		e.server[cmd]( unpack(args) )
+	end
+end
+
+function ce3d.serverCall( ent_id, cmd, ... )
+	local args = { ... }
+	local e = EntitySystem:getEntity( ent_id )
+	e.server[cmd]( unpack(args) )
 end

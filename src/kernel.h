@@ -33,17 +33,17 @@
 #include <OIS.h>
 #include "luastate.h"
 #include "tsingleton.h"
+#include "net/net.h"
 
 namespace CE3D {
     class Kernel : public OIS::MouseListener,
         public OIS::KeyListener,
-        public Ogre::FrameListener,
         public TSingleton<Kernel> {
         public:
             Kernel();
             ~Kernel();
 
-            bool init();
+            bool init ( int argc, const char *argv[] );
             void shutdown();
 
             bool createWindow ( uint width, uint height );
@@ -85,6 +85,18 @@ namespace CE3D {
                 return this->OISMouse;
             }
 
+        public:
+            net::Client &getClient() {
+                return Client;
+            }
+
+            net::Server &getServer() {
+                return Server;
+            }
+
+        public:
+            void doCall ( int type, int ent, const char *cmd, const char *args_format, CE3D::ByteBuffer *args );
+
         private:
             void renderFrame();
 
@@ -101,6 +113,7 @@ namespace CE3D {
             int LuaFrameStarted;
             int LuaFrameEnded;
             int LuaUpdate;
+            int LuaOnClientCall;
 //            int LuaServerTick;
 
 
@@ -118,6 +131,10 @@ namespace CE3D {
             OIS::Mouse         *OISMouse;
 
             Lua::LuaState MainLuaStat;
+
+        private:
+            net::Client Client;
+            net::Server Server;
 
         private:
             ulong LastMS;

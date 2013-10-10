@@ -29,11 +29,12 @@
 #include "kernel.h"
 #include "ois/keyboardapi.h"
 #include "ois/mouseapi.h"
+#include "bytebuffer.h"
 #include <Overlay/OgreFontManager.h>
 
 using namespace CE3D;
 
-Kernel::Kernel()
+Kernel::Kernel(  )
     : LastMS ( 0 ),
       LuaMouseMoved ( -1 ),
       LuaMousePressed ( -1 ),
@@ -50,7 +51,7 @@ Kernel::~Kernel() {
 }
 
 
-bool Kernel::init() {
+bool Kernel::init ( int argc, const char *argv[] ) {
     initMainState();
     //MainLuaStat.open();
 
@@ -95,6 +96,19 @@ bool Kernel::init() {
     Ogre::RenderSystem *lRenderSystem = lRenderSystemList[0];
     OGRERoot->setRenderSystem ( lRenderSystem );
     OGRERoot->initialise ( false, "CyberEg{o.o}rg 3D" );
+
+    if ( enet_initialize() < 0 ) {
+        //ConsoleSystem::printmsg ( ConsoleSystem::MSG_ERROR, "Enet init fail.\n" );
+        return false;
+    }
+
+    if ( argc > 1 ) {
+        Client.connect ( "localhost", 2222 );
+    } else {
+        MainLuaStat.pushBool ( true );
+        MainLuaStat.setGlobal ( "isServer" );
+        Server.listen ( 2222 );
+    }
 }
 
 bool Kernel::createWindow ( uint width, uint height ) {
@@ -128,7 +142,6 @@ bool Kernel::createWindow ( uint width, uint height ) {
 
     OISKeyboard->setEventCallback ( this );
     OISMouse->setEventCallback ( this );
-    OGRERoot->addFrameListener ( this );
 }
 
 void Kernel::shutdown() {
@@ -172,8 +185,15 @@ void Kernel::run() {
         ulong d_ms = ms - this->LastMS;
         this->LastMS = ms;
 
+        OISKeyboard->capture();
+        OISMouse->capture();
+
+        Server.step();
+        Client.step();
+
         /* Tick */
         MainLuaStat.callRef ( this->LuaUpdate, ( int ) d_ms );
+
 
         /* Rendering */
         renderFrame( );
@@ -185,8 +205,7 @@ bool Kernel::frameEnded ( const Ogre::FrameEvent &evt ) {
 }
 
 bool Kernel::frameStarted ( const Ogre::FrameEvent &evt ) {
-    OISKeyboard->capture();
-    OISMouse->capture();
+
     return true;
 }
 
@@ -231,6 +250,8 @@ void Kernel::initMainLuaRef() {
 
     this->LuaUpdate = MainLuaStat.getTableItemRef ( this->LuaCE3DTable, "update" );
 
+    this->LuaOnClientCall = MainLuaStat.getTableItemRef ( this->LuaCE3DTable, "clientCall" );
+
 //    this->LuaServerTick =  MainLuaStat.getTableItemRef ( this->LuaCE3DTable, "serverTick"  );
 
 //    this->LuaFrameStarted = MainLuaStat.getGlobalRef( "FrameStarted"  );
@@ -244,6 +265,7 @@ void Kernel::initMainState() {
     }
 
     MainLuaStat.addPackagePath ( ";./core/?.lua" );
+    MainLuaStat.addPackagePath ( ";./core/lua/?.lua" );
     MainLuaStat.addPackagePath ( ";./game/?.lua" );
 
     MainLuaStat.createGlobalTable ( "ce3d" );
@@ -256,3 +278,31 @@ void Kernel::initMainState() {
     MainLuaStat.getGlobal ( "CE3D" );
     LuaCETable = MainLuaStat.ref();
 }
+
+void Kernel::doCall ( int type, int ent, const char *cmd, const char *args_format, CE3D::ByteBuffer *args ) {
+    lua_State *s = this->MainLuaStat.getLuaState();
+    lua_rawgeti ( s, LUA_REGISTRYINDEX, this->LuaOnClientCall );
+
+    lua_pushinteger ( s, type );
+    lua_pushinteger ( s, ent );
+    lua_pushstring ( s, cmd );
+
+    int arg_c = 3;
+    int i = 0;
+    char c = 0;
+    while ( ( c = args_format[i++] ) != '\0' ) {
+        arg_c++;
+        switch ( c ) {
+            case 'i':
+                int i = args->read<int>();
+                lua_pushinteger ( s, i );
+                break;
+        }
+    }
+
+    if ( lua_pcall ( s, arg_c, 0, 0 ) != 0 ) {
+        fprintf ( stderr, "error running function : %s\n",
+                  lua_tostring ( s, -1 ) );
+    }
+}
+

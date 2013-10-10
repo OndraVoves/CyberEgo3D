@@ -64,14 +64,14 @@ extern "C" {
 
         auto iter = e->getAllAnimationStates()->getEnabledAnimationStateIterator();
 
-        while( iter.hasMoreElements() ) {
-            iter.getNext()->addTime( dt_s );
+        while ( iter.hasMoreElements() ) {
+            iter.getNext()->addTime ( dt_s );
         }
     }
 
     void mesh_anim_play ( void *state, bool loop ) {
         Ogre::AnimationState *s = static_cast<Ogre::AnimationState *> ( state );
-        s->setLoop( loop );
+        s->setLoop ( loop );
         s->setEnabled ( true );
     }
 
@@ -80,11 +80,11 @@ extern "C" {
         s->setEnabled ( false );
     }
 
-    int mesh_anim_count( void* mesh ) {
+    int mesh_anim_count ( void *mesh ) {
         Ogre::Entity *e = static_cast<Ogre::Entity *> ( mesh );
         auto iter = e->getAllAnimationStates()->getAnimationStateIterator();
         int c = 0;
-        while( iter.hasMoreElements() ) {
+        while ( iter.hasMoreElements() ) {
             iter.getNext();
             c++;
         }
@@ -92,15 +92,15 @@ extern "C" {
         return c;
     }
 
-    const char* mesh_anim_name( void* mesh, int index ) {
+    const char *mesh_anim_name ( void *mesh, int index ) {
         Ogre::Entity *e = static_cast<Ogre::Entity *> ( mesh );
         auto iter = e->getAllAnimationStates()->getAnimationStateIterator();
 
         int c = 0;
-        while( iter.hasMoreElements() ) {
+        while ( iter.hasMoreElements() ) {
             auto s = iter.getNext();
 
-            if( c == index ) {
+            if ( c == index ) {
                 return s->getAnimationName().c_str();
             }
 

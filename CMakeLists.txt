@@ -36,18 +36,20 @@ ENDIF( APP_DEBUG )
 #########################
 # Find and set library. #
 #########################
+LINK_DIRECTORIES(${CMAKE_SOURCE_DIR}/3rd/luajit-2.0/src)
+
 find_package(Ogre REQUIRED)
 find_package(OIS  REQUIRED)
+#find_package(ENet REQUIRED)
 #find_package(luajit  REQUIRED)
-
-LINK_DIRECTORIES(${CMAKE_SOURCE_DIR}/3rd/luajit-2.0/src)
 
 SET( LIBS
 #    ${LUA_LIBRARIES}
     ${OIS_LIBRARIES}
     ${OGRE_LIBRARIES}
     OgreOverlay
-    luajit
+    ${CMAKE_SOURCE_DIR}/3rd/luajit-2.0/src/libluajit.a
+    ${CMAKE_SOURCE_DIR}/3rd/enet/.libs/libenet.a
 )
 
 include_directories(
@@ -55,6 +57,7 @@ include_directories(
     ${OIS_INCLUDE_DIR}
     ${OGRE_INCLUDE_DIR}
     ${CMAKE_SOURCE_DIR}/3rd/luajit-2.0/src
+    ${CMAKE_SOURCE_DIR}/3rd/enet/include
 )
 
 
@@ -63,6 +66,7 @@ include_directories(
 ####################
 SET( CE3D_SRC
     src/luastate.cpp
+    src/bytebuffer.cpp
     src/kernel.cpp
 
     src/ois/keyboardapi.cpp
@@ -71,6 +75,10 @@ SET( CE3D_SRC
     src/ogre/scenenodeapi.cpp
     src/ogre/meshapi.cpp
     src/ogre/cameraapi.cpp
+    src/ogre/particlesystemapi.cpp
+
+    src/net/server.cpp
+    src/net/client.cpp
 )
 
 SET( CE3D_MAIN_SRC
