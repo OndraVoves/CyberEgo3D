@@ -47,7 +47,7 @@ extern "C" {
 
     void camera_del ( void *camera ) {
         Ogre::Camera *c = static_cast<Ogre::Camera *> ( camera );
-        Kernel::inst().getOGRESceneMgr()->destroyCamera( c );
+        Kernel::inst().getOGRESceneMgr()->destroyCamera ( c );
     }
 
 

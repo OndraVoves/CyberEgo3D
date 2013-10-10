@@ -7,11 +7,6 @@ local Sinbad = {
 		visible = true,
 		
 		mesh = "Sinbad.mesh",
-		
-		animations = {
-			"RunBase", "RunTop",
-			"Dance", "IdleTop",
-		}
 	},
 		
 	components = {
@@ -21,12 +16,12 @@ local Sinbad = {
 }
 
 function Sinbad:onSpawn()	
-	self:playAnim( "Dance" )
-	self:playAnim( "RunBase" )
+	self:startAnimation( "Dance", true )
 end
 
 function Sinbad:onUpdate( dt )
 	local mesh = self.components.Mesh
+	
 	mesh:onUpdate(dt)
 end
 

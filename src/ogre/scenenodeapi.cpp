@@ -44,7 +44,7 @@ extern "C" {
         Ogre::SceneNode *node = static_cast<Ogre::SceneNode *> ( scene_node );
         node->detachAllObjects();
 
-        Kernel::inst().getOGRESceneMgr()->destroySceneNode( node );
+        Kernel::inst().getOGRESceneMgr()->destroySceneNode ( node );
     }
 
     void scenenode_setPosition ( void *scene_node, float x, float y, float z ) {
@@ -60,7 +60,7 @@ extern "C" {
     void scenenode_setVisible ( void *scene_node, bool visible ) {
         Ogre::SceneNode *node = static_cast<Ogre::SceneNode *> ( scene_node );
 
-        node->setVisible( visible );
+        node->setVisible ( visible );
     }
 
 }

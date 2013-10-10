@@ -40,30 +40,75 @@ extern "C" {
         return ent;
     }
 
-    void mesh_del( void* mesh ) {
+    void mesh_del ( void *mesh ) {
         Ogre::Entity *e = static_cast<Ogre::Entity *> ( mesh );
 
-        Kernel::inst().getOGRESceneMgr()->destroyEntity( e );
+        Kernel::inst().getOGRESceneMgr()->destroyEntity ( e );
 
         //delete e;
     }
 
-    void* mesh_get_anim( void* mesh, const char* name ) {
+    void *mesh_get_anim ( void *mesh, const char *name ) {
         Ogre::Entity *e = static_cast<Ogre::Entity *> ( mesh );
-        Ogre::AnimationState* state = e->getAnimationState( name );
+        Ogre::AnimationState *state = e->getAnimationState ( name );
+
         //state->setEnabled(true);
-        state->setLoop(true);
+        //state->setLoop ( true );
 
         return state;
     }
 
-    void mesh_anim_update( void *state, int dt ) {
-        Ogre::AnimationState *s = static_cast<Ogre::AnimationState *> ( state );
-        s->addTime( dt * (1.0/1000.0) );
+    void mesh_anim_update ( void *mesh, int dt ) {
+        Ogre::Entity *e = static_cast<Ogre::Entity *> ( mesh );
+        float dt_s = dt * ( 1.0 / 1000.0 );
+
+        auto iter = e->getAllAnimationStates()->getEnabledAnimationStateIterator();
+
+        while( iter.hasMoreElements() ) {
+            iter.getNext()->addTime( dt_s );
+        }
     }
 
-    void mesh_anim_play( void *state ) {
+    void mesh_anim_play ( void *state, bool loop ) {
         Ogre::AnimationState *s = static_cast<Ogre::AnimationState *> ( state );
-        s->setEnabled( true );
+        s->setLoop( loop );
+        s->setEnabled ( true );
     }
+
+    void mesh_anim_stop ( void *state ) {
+        Ogre::AnimationState *s = static_cast<Ogre::AnimationState *> ( state );
+        s->setEnabled ( false );
+    }
+
+    int mesh_anim_count( void* mesh ) {
+        Ogre::Entity *e = static_cast<Ogre::Entity *> ( mesh );
+        auto iter = e->getAllAnimationStates()->getAnimationStateIterator();
+        int c = 0;
+        while( iter.hasMoreElements() ) {
+            iter.getNext();
+            c++;
+        }
+
+        return c;
+    }
+
+    const char* mesh_anim_name( void* mesh, int index ) {
+        Ogre::Entity *e = static_cast<Ogre::Entity *> ( mesh );
+        auto iter = e->getAllAnimationStates()->getAnimationStateIterator();
+
+        int c = 0;
+        while( iter.hasMoreElements() ) {
+            auto s = iter.getNext();
+
+            if( c == index ) {
+                return s->getAnimationName().c_str();
+            }
+
+            c++;
+        }
+
+        return "";
+    }
+
+
 }
