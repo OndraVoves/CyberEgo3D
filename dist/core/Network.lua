@@ -22,12 +22,12 @@ function Network.Make( ent, config )
 				local args = { ... }
 				local values = {}
 				for i=1,#args do
-					local ch = string.sub( format, i, i)
+					local ch = string.char(string.byte(format,i))
 					if ch == 'i' then
 						values[#values+1] = ffi.new("int", args[i] )
 					end
 				end			
-				C.client_call( 0, entity.id, name, format , unpack( values ) )
+				C.client_call( -1, entity.id, name, format , unpack( values ) )
 			end
 		end
 	end
@@ -43,7 +43,7 @@ function Network.Make( ent, config )
 				local args = { ... }
 				local values = {}
 				for i=1,#args do
-					local ch = string.sub( format, i, i)
+					local ch = string.char(string.byte(format,i))
 					if ch == 'i' then
 						values[#values+1] = ffi.new("int", args[i] )
 					end

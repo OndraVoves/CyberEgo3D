@@ -31,6 +31,7 @@ function main()
 end
 
 function ce3d.update( dt )
+	print(dt)
 	EntitySystem:update( dt )
 end
 
@@ -65,14 +66,14 @@ function ce3d.clientCall( type, ent_id, cmd, ... )
 	local e = EntitySystem:getEntity( ent_id )
 	
 	if type == 1 then
-		e.client[cmd]( unpack(args) )
+		e.client[cmd]( e, unpack(args) )
 	else
-		e.server[cmd]( unpack(args) )
+		e.server[cmd]( e, unpack(args) )
 	end
 end
 
 function ce3d.serverCall( ent_id, cmd, ... )
 	local args = { ... }
 	local e = EntitySystem:getEntity( ent_id )
-	e.server[cmd]( unpack(args) )
+	--e.server[cmd]( unpack(args) )
 end
