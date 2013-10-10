@@ -40,7 +40,6 @@ function new( entity_class )
 	end
 
 	function Entity:_onDestroy()
-		-- Init components
 		for k, v in pairs( self.components ) do
 			v:onDestroy()
 		end
@@ -60,7 +59,7 @@ function new( entity_class )
 			self:onSpawn()
 		end
 	end
-
+	
 	-- Copy table
 	for k, v in pairs( entity_class ) do
 		if k ~= "components" and k ~= "attributes" then
