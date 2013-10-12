@@ -29,7 +29,7 @@
 #include "server.h"
 
 #include "net.h"
-#include "../bytebuffer.h"
+#include "../common/bytebuffer.h"
 #include "../kernel.h"
 #include <stdio.h>
 #include <stdarg.h>
@@ -107,15 +107,17 @@ void Server::vaClientCall ( int client, int ent, const char *cmd, const char *ar
     buff.write<c_str> ( args_format );
 
     int i = 0;
-    int tmp_i = 0;
-
     char c = 0;
+
+    //vprintf( "%f, %f, %f\n", args );
     while ( ( c = args_format[i++] ) != '\0' ) {
-        switch ( c ) {
-            case 'i':
-                tmp_i = va_arg ( args, int );
-                buff.write<int> ( tmp_i );
-                break;
+        if( c == 'i') {
+            int tmp_i = va_arg ( args, int );
+            buff.write<int> ( tmp_i );
+
+        } else if( c == 'f' ) {
+            float tmp_f = va_arg ( args, double );
+            buff.write<float> ( tmp_f );
         }
     }
 
@@ -164,6 +166,8 @@ void Server::parseConnect ( ENetEvent event ) {
         Event.peer->data = cl;
         cl->peer = Event.peer;
         cl->type = Client::REMOTE;
+
+        sendConnectResult( cl->id, true );
         //ConsoleSystem::printmsg ( ConsoleSystem::MSG_INFO, "Enet connecting from \"%s:%u\"\n", hostname, Event.peer->address.port );
     } else {
         //ConsoleSystem::printmsg ( ConsoleSystem::MSG_ERROR, "Enet connecting from \"%s:%u\" fail. Server is full\n", hostname, Event.peer->address.port );
@@ -172,6 +176,7 @@ void Server::parseConnect ( ENetEvent event ) {
 void Server::parseDisonnect ( ENetEvent event ) {
     Client *cl = static_cast<Client *> ( Event.peer->data );
     if ( cl ) {
+        CE3D::Kernel::inst().luaOnClientDisconnect( cl->id );
         cl->type = Client::FREE;
     }
 }
@@ -209,7 +214,7 @@ bool Server::send ( int to, int channel, CE3D::ByteBuffer *packet, bool reliable
         }
 
         ENetPacket *enet_packet = enet_packet_create ( packet->data(), packet->curByte(), flags );
-        enet_peer_send ( cl->peer, channel, enet_packet );
+        enet_peer_send ( cl->peer, cl->id, enet_packet );
         return true;
 
     } else {
@@ -237,4 +242,19 @@ void Server::parseCall ( CE3D::ByteBuffer *packet ) {
     c_str args_format = packet->read<c_str>();
 
     CE3D::Kernel::inst().doCall ( 2, ent_id, cmd, args_format, packet );
+}
+
+bool Server::sendConnectResult ( int client, bool ok ) {
+    char data[512];
+    ByteBuffer buff ( data, 512 );
+
+    buff.write<int> ( net::CMD_CONNECT_RESULT );
+    buff.write<int> ( ok );
+    if( ok ) {
+        buff.write<int> ( client );
+    }
+
+    send ( client, 1, &buff, true );
+
+    CE3D::Kernel::inst().luaOnClientConnect( client );
 }

@@ -49,6 +49,7 @@ namespace CE3D {
                 ~Client();
 
                 bool connect ( const char *addr, unsigned int port );
+                void disconnect();
 
                 void step();
 
@@ -64,7 +65,9 @@ namespace CE3D {
 
             private:
                 void parseCall ( ByteBuffer *packet );
+                void parseConnectResult( ByteBuffer *packet );
 
+            private:
                 bool send ( int channel, ByteBuffer *packet, bool reliable );
 
             private:

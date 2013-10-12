@@ -27,6 +27,11 @@
 
 
 #include "../kernel.h"
+#include <OgreSceneNode.h>
+#include <OgreSceneManager.h>
+#include <OgreCamera.h>
+#include <OgreViewport.h>
+#include <OgreRenderWindow.h>
 
 using namespace CE3D;
 

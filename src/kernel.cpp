@@ -27,10 +27,11 @@
 
 
 #include "kernel.h"
+#include <Ogre.h>
 #include "ois/keyboardapi.h"
 #include "ois/mouseapi.h"
-#include "bytebuffer.h"
-#include <Overlay/OgreFontManager.h>
+#include "common/bytebuffer.h"
+#include "OgreFontManager.h"
 
 using namespace CE3D;
 
@@ -62,16 +63,16 @@ bool Kernel::init ( int argc, const char *argv[] ) {
     mouse_api->init ( MainLuaStat, LuaCETable );
 
     //TODO: volitelna cesta... pluginy mozna napevno v programu
-    OGRERoot = new Ogre::Root ( "./data/plugins.cfg" );
+    OGRERoot = new Ogre::Root ( "./core/ogre/plugins.cfg" );
     new Ogre::FontManager();
 
     Ogre::ResourceGroupManager &rm = Ogre::ResourceGroupManager::getSingleton();
-    rm.addResourceLocation ( "data", "FileSystem" );
-    rm.addResourceLocation ( "data/gui", "FileSystem" );
-    rm.addResourceLocation ( "data/scripts/cmds", "FileSystem", "LuaCmds" );
+    rm.addResourceLocation ( "game", "FileSystem" );
+    rm.addResourceLocation ( "game/gui", "FileSystem" );
+    rm.addResourceLocation ( "game/scripts/cmds", "FileSystem", "LuaCmds" );
 
     Ogre::ConfigFile cf;
-    cf.load ( "./data/resources.cfg" );
+    cf.load ( "./game/resources.cfg" );
 
     auto seci = cf.getSectionIterator();
 
@@ -173,13 +174,16 @@ void Kernel::updateWindow() {
 
 
 void Kernel::run() {
-    MainLuaStat.doFile ( "./core/main.lua" );
+    MainLuaStat.doFile ( "./core/scripts/main.lua" );
     initMainLuaRef();
 
     int r = MainLuaStat.getGlobalRef ( "main" );
     MainLuaStat.callRef ( r );
 
+    int last_render = 0;
     while ( 1 ) {
+        //printf( "GAME\n" );
+
         /* calc d_time */
         ulong ms = OGRERoot->getTimer()->getMilliseconds();
         ulong d_ms = ms - this->LastMS;
@@ -194,13 +198,17 @@ void Kernel::run() {
         /* Tick */
         MainLuaStat.callRef ( this->LuaUpdate, ( int ) d_ms );
 
-
         /* Rendering */
-        renderFrame( );
+        last_render += d_ms;
+        if( last_render >= 33 ) {
+            renderFrame( );
+            //printf( "RENDER\n" );
+            last_render = 0;
+        }
     }
 }
 
-bool Kernel::frameEnded ( const Ogre::FrameEvent &evt ) {
+/*bool Kernel::frameEnded ( const Ogre::FrameEvent &evt ) {
     return true;
 }
 
@@ -208,8 +216,13 @@ bool Kernel::frameStarted ( const Ogre::FrameEvent &evt ) {
 
     return true;
 }
+*/
 
 bool Kernel::keyPressed ( const OIS::KeyEvent &e ) {
+    if( e.key == OIS::KC_D ) {
+        Client.disconnect();
+    }
+
     MainLuaStat.callRef ( this->LuaKeyPressed, ( int ) e.key );
     return true;
 }
@@ -250,12 +263,10 @@ void Kernel::initMainLuaRef() {
 
     this->LuaUpdate = MainLuaStat.getTableItemRef ( this->LuaCE3DTable, "update" );
 
-    this->LuaOnClientCall = MainLuaStat.getTableItemRef ( this->LuaCE3DTable, "clientCall" );
+    this->LuaOnCall = MainLuaStat.getTableItemRef ( this->LuaCE3DTable, "clientCall" );
+    this->LuaOnClientConnect = MainLuaStat.getTableItemRef ( this->LuaCE3DTable, "onClientConnect" );
+    this->LuaOnClientDisonnect = MainLuaStat.getTableItemRef ( this->LuaCE3DTable, "onClientDisconnect" );
 
-//    this->LuaServerTick =  MainLuaStat.getTableItemRef ( this->LuaCE3DTable, "serverTick"  );
-
-//    this->LuaFrameStarted = MainLuaStat.getGlobalRef( "FrameStarted"  );
-//    this->LuaFrameEnded = MainLuaStat.getGlobalRef( "FrameEnded"  );
 }
 
 
@@ -281,7 +292,7 @@ void Kernel::initMainState() {
 
 void Kernel::doCall ( int type, int ent, const char *cmd, const char *args_format, CE3D::ByteBuffer *args ) {
     lua_State *s = this->MainLuaStat.getLuaState();
-    lua_rawgeti ( s, LUA_REGISTRYINDEX, this->LuaOnClientCall );
+    lua_rawgeti ( s, LUA_REGISTRYINDEX, this->LuaOnCall );
 
     lua_pushinteger ( s, type );
     lua_pushinteger ( s, ent );
@@ -291,12 +302,20 @@ void Kernel::doCall ( int type, int ent, const char *cmd, const char *args_forma
     int i = 0;
     char c = 0;
     while ( ( c = args_format[i++] ) != '\0' ) {
-        arg_c++;
         switch ( c ) {
-            case 'i':
+            case 'i': {
+                arg_c++;
                 int i = args->read<int>();
                 lua_pushinteger ( s, i );
                 break;
+            }
+
+            case 'f': {
+                arg_c++;
+                float f = args->read<float>();
+                lua_pushnumber ( s, f );
+                break;
+            }
         }
     }
 
@@ -304,5 +323,13 @@ void Kernel::doCall ( int type, int ent, const char *cmd, const char *args_forma
         fprintf ( stderr, "error running function : %s\n",
                   lua_tostring ( s, -1 ) );
     }
+}
+
+void Kernel::luaOnClientConnect ( int id ) {
+    MainLuaStat.callRef( LuaOnClientConnect, id );
+}
+
+void Kernel::luaOnClientDisconnect ( int id ) {
+    MainLuaStat.callRef( LuaOnClientDisonnect, id );
 }
 

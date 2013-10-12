@@ -44,19 +44,25 @@ find_package(OIS  REQUIRED)
 #find_package(luajit  REQUIRED)
 
 SET( LIBS
-#    ${LUA_LIBRARIES}
     ${OIS_LIBRARIES}
-    ${OGRE_LIBRARIES}
-    OgreOverlay
-    ${CMAKE_SOURCE_DIR}/3rd/luajit-2.0/src/libluajit.a
+
+    ${CMAKE_SOURCE_DIR}/3rd/ogre/build/lib/libOgreMain.so
+    ${CMAKE_SOURCE_DIR}/3rd/ogre/build/lib/libOgreOverlay.so
+
+    ${CMAKE_SOURCE_DIR}/3rd/luajit/src/libluajit.a
     ${CMAKE_SOURCE_DIR}/3rd/enet/.libs/libenet.a
 )
 
 include_directories(
 #    ${LUA_INCLUDE_DIR}
     ${OIS_INCLUDE_DIR}
-    ${OGRE_INCLUDE_DIR}
-    ${CMAKE_SOURCE_DIR}/3rd/luajit-2.0/src
+#    ${OGRE_INCLUDE_DIR}
+
+    ${CMAKE_SOURCE_DIR}/3rd/ogre/OgreMain/include
+    ${CMAKE_SOURCE_DIR}/3rd/ogre/Components/Overlay/include
+    ${CMAKE_SOURCE_DIR}/3rd/ogre/build/include
+
+    ${CMAKE_SOURCE_DIR}/3rd/luajit/src
     ${CMAKE_SOURCE_DIR}/3rd/enet/include
 )
 
@@ -66,7 +72,7 @@ include_directories(
 ####################
 SET( CE3D_SRC
     src/luastate.cpp
-    src/bytebuffer.cpp
+    src/common/bytebuffer.cpp
     src/kernel.cpp
 
     src/ois/keyboardapi.cpp

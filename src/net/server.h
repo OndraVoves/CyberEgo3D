@@ -40,6 +40,10 @@ namespace CE3D {
     namespace net {
         class Server {
             private:
+                enum {
+                    MAX_CLIENTS = 32
+                };
+
                 struct Client {
                     enum {
                         LOCAL = 0,
@@ -51,10 +55,6 @@ namespace CE3D {
                     int id;
 
                     ENetPeer *peer;
-                };
-
-                enum {
-                    MAX_CLIENTS = 32
                 };
 
             public:
@@ -81,9 +81,13 @@ namespace CE3D {
                 Client *getNewClient();
 
             private:
+                void parseCall ( CE3D::ByteBuffer *packet );
+
+
+            private:
                 bool send ( int to, int channel, ByteBuffer *packet, bool reliable );
 
-                void parseCall ( CE3D::ByteBuffer *packet );
+                bool sendConnectResult( int client, bool ok );
 
             private:
                 Client Clients[MAX_CLIENTS];

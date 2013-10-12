@@ -28,7 +28,7 @@
 
 #include "client.h"
 #include "net.h"
-#include "../bytebuffer.h"
+#include "../common/bytebuffer.h"
 #include "../kernel.h"
 #include <stdio.h>
 
@@ -52,7 +52,6 @@ Client::Client()
 }
 
 Client::~Client() {
-
 }
 
 void Client::step() {
@@ -114,6 +113,7 @@ void Client::parseConnect ( ENetEvent event ) {
 }
 void Client::parseDisonnect ( ENetEvent event ) {
     // TODO: console
+    ServerPeer = nullptr;
     printf ( "Disconnected from server\n" );
 }
 
@@ -129,6 +129,10 @@ void Client::parsePacket ( const int chanel, CE3D::ByteBuffer *packet ) {
     switch ( command ) {
         case CMD_CLIENT_CALL:
             parseCall ( packet );
+            break;
+
+        case CMD_CONNECT_RESULT:
+            parseConnectResult( packet );
             break;
     }
 }
@@ -159,19 +163,19 @@ void Client::vaServerCall ( int ent, const char *cmd, const char *args_format, v
     buff.write<c_str> ( args_format );
 
     int i = 0;
-    int tmp_i = 0;
     char c = 0;
     while ( ( c = args_format[i++] ) != '\0' ) {
-        switch ( c ) {
-            case 'i':
-                tmp_i = va_arg ( args, int );
-                buff.write<int> ( tmp_i );
-                break;
+        if( c == 'i') {
+            int tmp_i = va_arg ( args, int );
+            buff.write<int> ( tmp_i );
+
+        } else if( c == 'f' ) {
+            float tmp_f = va_arg ( args, float );
+            buff.write<float> ( tmp_f );
         }
     }
 
-    send ( 1, &buff, true );
-
+    send ( this->ID, &buff, true );
 }
 
 bool Client::send ( int channel, CE3D::ByteBuffer *packet, bool reliable ) {
@@ -183,4 +187,20 @@ bool Client::send ( int channel, CE3D::ByteBuffer *packet, bool reliable ) {
 
     ENetPacket *enet_packet = enet_packet_create ( packet->data(), packet->curByte(), flags );
     enet_peer_send ( ServerPeer, channel, enet_packet );
+}
+
+void Client::parseConnectResult ( CE3D::ByteBuffer* packet ) {
+    int status = packet->read<int>();
+    if( status = 1 ) {
+        int id = packet->read<int>();
+        this->ID = id;
+    } else {
+        this->ID = -1;
+    }
+}
+
+void Client::disconnect() {
+    if( ServerPeer ) {
+        enet_peer_disconnect( ServerPeer, 0 );
+    }
 }

@@ -35,17 +35,17 @@
 namespace CE3D {
     namespace net {
         typedef enum {
-            CHANNEL_1 = 0,
+            CHANNEL_1 = 32,
             CHANNEL_2,
-            CHANNEL_3,
-            CHANNEL_4,
             MAX_CHANNELS
         } NET_CHANNELS;
 
         typedef enum {
             CMD_CLIENT_CALL = 0, /* run on client side*/
-            CMD_SERVER_CALL      /* run on server side*/
+            CMD_SERVER_CALL,      /* run on server side*/
+            CMD_CONNECT_RESULT,
         } NET_COMMANDS;
+
     }
 }
 

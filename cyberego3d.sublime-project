@@ -1,0 +1,17 @@
+{
+	"folders":
+	[
+		{
+			"follow_symlinks": true,
+			"path": "src"
+		},
+		{
+			"follow_symlinks": true,
+			"path": "dist/core"
+		},
+		{
+			"follow_symlinks": true,
+			"path": "dist/game"
+		}
+	]
+}

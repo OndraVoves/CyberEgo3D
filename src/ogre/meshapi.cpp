@@ -27,6 +27,9 @@
 
 
 #include "../kernel.h"
+#include <OgreSceneNode.h>
+#include <OgreEntity.h>
+#include <OgreSceneManager.h>
 
 using namespace CE3D;
 

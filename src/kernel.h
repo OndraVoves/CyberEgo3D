@@ -29,11 +29,17 @@
 #ifndef CE3D_OGRE_H
 #define CE3D_OGRE_H
 
-#include <Ogre.h>
 #include <OIS.h>
 #include "luastate.h"
-#include "tsingleton.h"
+#include "common/tsingleton.h"
 #include "net/net.h"
+
+namespace Ogre
+{
+class Root;
+class RenderWindow;
+class SceneManager;
+}
 
 namespace CE3D {
     class Kernel : public OIS::MouseListener,
@@ -60,8 +66,8 @@ namespace CE3D {
             bool keyReleased ( const OIS::KeyEvent &e );
 
         public:
-            bool frameStarted ( const Ogre::FrameEvent &evt );
-            bool frameEnded ( const Ogre::FrameEvent &evt );
+            //bool frameStarted ( const Ogre::FrameEvent &evt );
+            //bool frameEnded ( const Ogre::FrameEvent &evt );
 
         private:
             void updateWindow();
@@ -113,13 +119,20 @@ namespace CE3D {
             int LuaFrameStarted;
             int LuaFrameEnded;
             int LuaUpdate;
-            int LuaOnClientCall;
+            int LuaOnCall;
+
+            int LuaOnClientConnect;
+            int LuaOnClientDisonnect;
 //            int LuaServerTick;
 
 
             void initMainLuaRef();
 
             void initMainState();
+
+        public:
+            void luaOnClientConnect( int id );
+            void luaOnClientDisconnect( int id );
 
         private:
             Ogre::Root         *OGRERoot;
