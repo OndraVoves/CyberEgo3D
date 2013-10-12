@@ -65,7 +65,7 @@ namespace CE3D {
 
             private:
                 void parseCall ( ByteBuffer *packet );
-                void parseConnectResult( ByteBuffer *packet );
+                void parseConnectResult ( ByteBuffer *packet );
 
             private:
                 bool send ( int channel, ByteBuffer *packet, bool reliable );

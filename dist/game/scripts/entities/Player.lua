@@ -35,10 +35,10 @@ net.entity.make{
 
 function Player:onUpdate( dt )
 	if not isServer then
-		local u = CE3D.keyb.isKeyDown( 200 )
-		local d = CE3D.keyb.isKeyDown( 208 )
-		local l = CE3D.keyb.isKeyDown( 203 )
-		local r = CE3D.keyb.isKeyDown( 205 )
+		local u = keyb.isKeyDown( 200 )
+		local d = keyb.isKeyDown( 208 )
+		local l = keyb.isKeyDown( 203 )
+		local r = keyb.isKeyDown( 205 )
 
 		if u or d or l or r then
 			self:move( u, d, l, r )

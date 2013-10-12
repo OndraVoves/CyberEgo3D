@@ -71,9 +71,8 @@ include_directories(
 # Set sourcefiles. #
 ####################
 SET( CE3D_SRC
-    src/luastate.cpp
+    src/common/luastate.cpp
     src/common/bytebuffer.cpp
-    src/kernel.cpp
 
     src/ois/keyboardapi.cpp
     src/ois/mouseapi.cpp
@@ -85,6 +84,9 @@ SET( CE3D_SRC
 
     src/net/server.cpp
     src/net/client.cpp
+
+    src/mainstate.cpp
+    src/kernel.cpp
 )
 
 SET( CE3D_MAIN_SRC

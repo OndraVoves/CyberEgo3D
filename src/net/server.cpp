@@ -111,11 +111,11 @@ void Server::vaClientCall ( int client, int ent, const char *cmd, const char *ar
 
     //vprintf( "%f, %f, %f\n", args );
     while ( ( c = args_format[i++] ) != '\0' ) {
-        if( c == 'i') {
+        if ( c == 'i' ) {
             int tmp_i = va_arg ( args, int );
             buff.write<int> ( tmp_i );
 
-        } else if( c == 'f' ) {
+        } else if ( c == 'f' ) {
             float tmp_f = va_arg ( args, double );
             buff.write<float> ( tmp_f );
         }
@@ -167,7 +167,7 @@ void Server::parseConnect ( ENetEvent event ) {
         cl->peer = Event.peer;
         cl->type = Client::REMOTE;
 
-        sendConnectResult( cl->id, true );
+        sendConnectResult ( cl->id, true );
         //ConsoleSystem::printmsg ( ConsoleSystem::MSG_INFO, "Enet connecting from \"%s:%u\"\n", hostname, Event.peer->address.port );
     } else {
         //ConsoleSystem::printmsg ( ConsoleSystem::MSG_ERROR, "Enet connecting from \"%s:%u\" fail. Server is full\n", hostname, Event.peer->address.port );
@@ -176,7 +176,7 @@ void Server::parseConnect ( ENetEvent event ) {
 void Server::parseDisonnect ( ENetEvent event ) {
     Client *cl = static_cast<Client *> ( Event.peer->data );
     if ( cl ) {
-        CE3D::Kernel::inst().luaOnClientDisconnect( cl->id );
+        CE3D::Kernel::inst().getMainState().onClientDisonnect( cl->id );
         cl->type = Client::FREE;
     }
 }
@@ -241,7 +241,7 @@ void Server::parseCall ( CE3D::ByteBuffer *packet ) {
     c_str cmd = packet->read<c_str>();
     c_str args_format = packet->read<c_str>();
 
-    CE3D::Kernel::inst().doCall ( 2, ent_id, cmd, args_format, packet );
+    CE3D::Kernel::inst().getMainState().onNetCall( 2, ent_id, cmd, args_format, packet );
 }
 
 bool Server::sendConnectResult ( int client, bool ok ) {
@@ -250,11 +250,11 @@ bool Server::sendConnectResult ( int client, bool ok ) {
 
     buff.write<int> ( net::CMD_CONNECT_RESULT );
     buff.write<int> ( ok );
-    if( ok ) {
+    if ( ok ) {
         buff.write<int> ( client );
     }
 
     send ( client, 1, &buff, true );
 
-    CE3D::Kernel::inst().luaOnClientConnect( client );
+    CE3D::Kernel::inst().getMainState().onClientConnect ( client );
 }

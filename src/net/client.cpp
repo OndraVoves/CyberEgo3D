@@ -132,7 +132,7 @@ void Client::parsePacket ( const int chanel, CE3D::ByteBuffer *packet ) {
             break;
 
         case CMD_CONNECT_RESULT:
-            parseConnectResult( packet );
+            parseConnectResult ( packet );
             break;
     }
 }
@@ -142,7 +142,7 @@ void Client::parseCall ( CE3D::ByteBuffer *packet ) {
     c_str cmd = packet->read<c_str>();
     c_str args_format = packet->read<c_str>();
 
-    CE3D::Kernel::inst().doCall ( 1, ent_id, cmd, args_format, packet );
+    CE3D::Kernel::inst().getMainState().onNetCall( 1, ent_id, cmd, args_format, packet );
 }
 
 
@@ -165,11 +165,11 @@ void Client::vaServerCall ( int ent, const char *cmd, const char *args_format, v
     int i = 0;
     char c = 0;
     while ( ( c = args_format[i++] ) != '\0' ) {
-        if( c == 'i') {
+        if ( c == 'i' ) {
             int tmp_i = va_arg ( args, int );
             buff.write<int> ( tmp_i );
 
-        } else if( c == 'f' ) {
+        } else if ( c == 'f' ) {
             float tmp_f = va_arg ( args, float );
             buff.write<float> ( tmp_f );
         }
@@ -189,9 +189,9 @@ bool Client::send ( int channel, CE3D::ByteBuffer *packet, bool reliable ) {
     enet_peer_send ( ServerPeer, channel, enet_packet );
 }
 
-void Client::parseConnectResult ( CE3D::ByteBuffer* packet ) {
+void Client::parseConnectResult ( CE3D::ByteBuffer *packet ) {
     int status = packet->read<int>();
-    if( status = 1 ) {
+    if ( status = 1 ) {
         int id = packet->read<int>();
         this->ID = id;
     } else {
@@ -200,7 +200,7 @@ void Client::parseConnectResult ( CE3D::ByteBuffer* packet ) {
 }
 
 void Client::disconnect() {
-    if( ServerPeer ) {
-        enet_peer_disconnect( ServerPeer, 0 );
+    if ( ServerPeer ) {
+        enet_peer_disconnect ( ServerPeer, 0 );
     }
 }

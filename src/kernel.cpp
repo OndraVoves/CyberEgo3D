@@ -36,15 +36,7 @@
 using namespace CE3D;
 
 Kernel::Kernel(  )
-    : LastMS ( 0 ),
-      LuaMouseMoved ( -1 ),
-      LuaMousePressed ( -1 ),
-      LuaMouseReleased ( -1 ),
-      LuaKeyPressed ( -1 ),
-      LuaKeyReleased ( -1 ),
-      LuaFrameStarted ( -1 ),
-      LuaFrameEnded ( -1 ),
-      LuaUpdate ( -1 ) {
+    : LastMS ( 0 ) {
 }
 
 Kernel::~Kernel() {
@@ -53,14 +45,7 @@ Kernel::~Kernel() {
 
 
 bool Kernel::init ( int argc, const char *argv[] ) {
-    initMainState();
-    //MainLuaStat.open();
-
-    // TODO: dynamic
-    KeyboardAPI *k_api = new KeyboardAPI();
-    MouseAPI *mouse_api = new MouseAPI();
-    k_api->init ( MainLuaStat, LuaCETable );
-    mouse_api->init ( MainLuaStat, LuaCETable );
+    MainState.init();
 
     //TODO: volitelna cesta... pluginy mozna napevno v programu
     OGRERoot = new Ogre::Root ( "./core/ogre/plugins.cfg" );
@@ -106,8 +91,8 @@ bool Kernel::init ( int argc, const char *argv[] ) {
     if ( argc > 1 ) {
         Client.connect ( "localhost", 2222 );
     } else {
-        MainLuaStat.pushBool ( true );
-        MainLuaStat.setGlobal ( "isServer" );
+        MainState.pushBool ( true );
+        MainState.setGlobal ( "isServer" );
         Server.listen ( 2222 );
     }
 }
@@ -174,11 +159,12 @@ void Kernel::updateWindow() {
 
 
 void Kernel::run() {
-    MainLuaStat.doFile ( "./core/scripts/main.lua" );
-    initMainLuaRef();
+    MainState.callMain();
+    //MainLuaStat.doFile ( "./core/scripts/main.lua" );
+    //initMainLuaRef();
 
-    int r = MainLuaStat.getGlobalRef ( "main" );
-    MainLuaStat.callRef ( r );
+    //int r = MainLuaStat.getGlobalRef ( "main" );
+    //MainLuaStat.callRef ( r );
 
     int last_render = 0;
     while ( 1 ) {
@@ -196,11 +182,11 @@ void Kernel::run() {
         Client.step();
 
         /* Tick */
-        MainLuaStat.callRef ( this->LuaUpdate, ( int ) d_ms );
+        MainState.onUpdate( d_ms );
 
         /* Rendering */
         last_render += d_ms;
-        if( last_render >= 33 ) {
+        if ( last_render >= 33 ) {
             renderFrame( );
             //printf( "RENDER\n" );
             last_render = 0;
@@ -219,31 +205,31 @@ bool Kernel::frameStarted ( const Ogre::FrameEvent &evt ) {
 */
 
 bool Kernel::keyPressed ( const OIS::KeyEvent &e ) {
-    if( e.key == OIS::KC_D ) {
+    if ( e.key == OIS::KC_D ) {
         Client.disconnect();
     }
 
-    MainLuaStat.callRef ( this->LuaKeyPressed, ( int ) e.key );
+    //MainLuaStat.callRef ( this->LuaKeyPressed, ( int ) e.key );
     return true;
 }
 
 bool Kernel::keyReleased ( const OIS::KeyEvent &e ) {
-    MainLuaStat.callRef ( this->LuaKeyReleased, ( int ) e.key );
+    //MainLuaStat.callRef ( this->LuaKeyReleased, ( int ) e.key );
     return true;
 }
 
 bool Kernel::mouseMoved ( const OIS::MouseEvent &e ) {
-    MainLuaStat.callRef ( this->LuaMouseMoved );
+    //MainLuaStat.callRef ( this->LuaMouseMoved );
     return true;
 }
 
 bool Kernel::mousePressed ( const OIS::MouseEvent &e, OIS::MouseButtonID id ) {
-    MainLuaStat.callRef ( this->LuaMousePressed );
+    //MainLuaStat.callRef ( this->LuaMousePressed );
     return true;
 }
 
 bool Kernel::mouseReleased ( const OIS::MouseEvent &e, OIS::MouseButtonID id ) {
-    MainLuaStat.callRef ( this->LuaMouseReleased );
+    //MainLuaStat.callRef ( this->LuaMouseReleased );
     return true;
 }
 
@@ -251,85 +237,3 @@ void Kernel::renderFrame() {
     Ogre::WindowEventUtilities::messagePump();
     OGRERoot->renderOneFrame();
 }
-
-void Kernel::initMainLuaRef() {
-    this->LuaCE3DTable = MainLuaStat.getGlobalRef ( "ce3d" );
-
-    this->LuaMouseMoved = MainLuaStat.getTableItemRef ( this->LuaCE3DTable, "mouseMoved"  );
-    this->LuaMousePressed = MainLuaStat.getTableItemRef ( this->LuaCE3DTable, "mousePressed"  );
-    this->LuaMouseReleased = MainLuaStat.getTableItemRef ( this->LuaCE3DTable, "mouseReleased" );
-    this->LuaKeyPressed = MainLuaStat.getTableItemRef ( this->LuaCE3DTable, "keyPressed" );
-    this->LuaKeyReleased = MainLuaStat.getTableItemRef ( this->LuaCE3DTable, "keyReleased"  );
-
-    this->LuaUpdate = MainLuaStat.getTableItemRef ( this->LuaCE3DTable, "update" );
-
-    this->LuaOnCall = MainLuaStat.getTableItemRef ( this->LuaCE3DTable, "clientCall" );
-    this->LuaOnClientConnect = MainLuaStat.getTableItemRef ( this->LuaCE3DTable, "onClientConnect" );
-    this->LuaOnClientDisonnect = MainLuaStat.getTableItemRef ( this->LuaCE3DTable, "onClientDisconnect" );
-
-}
-
-
-void Kernel::initMainState() {
-    if ( !MainLuaStat.open() ) {
-        return;
-    }
-
-    MainLuaStat.addPackagePath ( ";./core/?.lua" );
-    MainLuaStat.addPackagePath ( ";./core/lua/?.lua" );
-    MainLuaStat.addPackagePath ( ";./game/?.lua" );
-
-    MainLuaStat.createGlobalTable ( "ce3d" );
-
-    /*create ce3d table*/
-
-    MainLuaStat.createTable ( 0, 0 );
-    MainLuaStat.setGlobal ( "CE3D" );
-
-    MainLuaStat.getGlobal ( "CE3D" );
-    LuaCETable = MainLuaStat.ref();
-}
-
-void Kernel::doCall ( int type, int ent, const char *cmd, const char *args_format, CE3D::ByteBuffer *args ) {
-    lua_State *s = this->MainLuaStat.getLuaState();
-    lua_rawgeti ( s, LUA_REGISTRYINDEX, this->LuaOnCall );
-
-    lua_pushinteger ( s, type );
-    lua_pushinteger ( s, ent );
-    lua_pushstring ( s, cmd );
-
-    int arg_c = 3;
-    int i = 0;
-    char c = 0;
-    while ( ( c = args_format[i++] ) != '\0' ) {
-        switch ( c ) {
-            case 'i': {
-                arg_c++;
-                int i = args->read<int>();
-                lua_pushinteger ( s, i );
-                break;
-            }
-
-            case 'f': {
-                arg_c++;
-                float f = args->read<float>();
-                lua_pushnumber ( s, f );
-                break;
-            }
-        }
-    }
-
-    if ( lua_pcall ( s, arg_c, 0, 0 ) != 0 ) {
-        fprintf ( stderr, "error running function : %s\n",
-                  lua_tostring ( s, -1 ) );
-    }
-}
-
-void Kernel::luaOnClientConnect ( int id ) {
-    MainLuaStat.callRef( LuaOnClientConnect, id );
-}
-
-void Kernel::luaOnClientDisconnect ( int id ) {
-    MainLuaStat.callRef( LuaOnClientDisonnect, id );
-}
-

@@ -30,15 +30,15 @@
 #define CE3D_OGRE_H
 
 #include <OIS.h>
-#include "luastate.h"
+#include "common/luastate.h"
 #include "common/tsingleton.h"
 #include "net/net.h"
+#include "mainstate.h"
 
-namespace Ogre
-{
-class Root;
-class RenderWindow;
-class SceneManager;
+namespace Ogre {
+    class Root;
+    class RenderWindow;
+    class SceneManager;
 }
 
 namespace CE3D {
@@ -100,39 +100,15 @@ namespace CE3D {
                 return Server;
             }
 
+            Lua::MainState& getMainState() {
+                return MainState;
+            }
+
         public:
             void doCall ( int type, int ent, const char *cmd, const char *args_format, CE3D::ByteBuffer *args );
 
         private:
             void renderFrame();
-
-        private:
-            int LuaCETable;
-
-            int LuaCE3DTable;
-
-            int LuaMouseMoved;
-            int LuaMousePressed;
-            int LuaMouseReleased;
-            int LuaKeyPressed;
-            int LuaKeyReleased;
-            int LuaFrameStarted;
-            int LuaFrameEnded;
-            int LuaUpdate;
-            int LuaOnCall;
-
-            int LuaOnClientConnect;
-            int LuaOnClientDisonnect;
-//            int LuaServerTick;
-
-
-            void initMainLuaRef();
-
-            void initMainState();
-
-        public:
-            void luaOnClientConnect( int id );
-            void luaOnClientDisconnect( int id );
 
         private:
             Ogre::Root         *OGRERoot;
@@ -143,7 +119,7 @@ namespace CE3D {
             OIS::Keyboard      *OISKeyboard;
             OIS::Mouse         *OISMouse;
 
-            Lua::LuaState MainLuaStat;
+            Lua::MainState MainState;
 
         private:
             net::Client Client;

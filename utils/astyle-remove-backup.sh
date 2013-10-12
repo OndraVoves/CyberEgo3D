@@ -1,2 +1,2 @@
 #!/bin/sh
-find ../ -name "*.orig" -delete
+find ../src/ -name "*.orig" -delete

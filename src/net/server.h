@@ -87,7 +87,7 @@ namespace CE3D {
             private:
                 bool send ( int to, int channel, ByteBuffer *packet, bool reliable );
 
-                bool sendConnectResult( int client, bool ok );
+                bool sendConnectResult ( int client, bool ok );
 
             private:
                 Client Clients[MAX_CLIENTS];

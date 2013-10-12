@@ -29,7 +29,7 @@
 #ifndef CE3D_MOUSE_H
 #define CE3D_MOUSE_H
 
-#include "../luastate.h"
+#include "../common/luastate.h"
 
 namespace CE3D {
     class MouseAPI: public CE3D::Lua::LuaLib {

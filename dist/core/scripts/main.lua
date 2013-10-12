@@ -2,6 +2,22 @@ EntitySystem = require("scripts/EntitySystem")
 ComponentSystem = require("scripts/ComponentSystem")
 Network  = require("scripts/Network")
 
+local ffi = require("ffi")
+local C = ffi.C
+ffi.cdef[[
+	bool isKeyDown( int keycode );
+	bool isModifierDown( int mod );
+]]
+
+keyb = {}
+function keyb.isKeyDown( keycode )
+	return C.isKeyDown( ffi.new('int', keycode ) )
+end
+
+function keyb.isModifierDown( mod )
+	return C.isModifierDown( ffi.new('int', mod ) )
+end
+
 local net = Network
 Game = {
     client={},
@@ -72,7 +88,7 @@ function main()
 	EntitySystem:load( m )
 end
 
-function ce3d.update( dt )
+function onUpdate( dt )
 	Game:onUpdate( dt )
 	EntitySystem:update( dt )
 	
@@ -80,29 +96,7 @@ function ce3d.update( dt )
 	Network:sendClientCallBuffer()
 end
 
-function ce3d.keyPressed( keycode )
-	print( "Keycode", keycode )
-	if keycode == 19 then
-		EntitySystem:reloadFactory()
-
-		local m = json.decode( file2str("map.json") )
-		EntitySystem:load( m )
-	end
-end
-
-function ce3d.keyReleased( keycode )
-end
-
-function ce3d.mouseMoved()
-end
-
-function ce3d.mousePressed()
-end
-
-function ce3d.mouseReleased()
-end
-
-function ce3d.clientCall( type, ent_id, cmd, ... )
+function onNetCall( type, ent_id, cmd, ... )
     local args = { ... }
 	
     if ent_id >= 0 then
@@ -123,10 +117,20 @@ function ce3d.clientCall( type, ent_id, cmd, ... )
     end
 end
 
-function ce3d.onClientConnect( id )
+function onClientConnect( id )
 	Game:onClientConnect(id)
 end
-
-function ce3d.onClientDisconnect( id )
+		 
+function onClientDisconnect( id )
 	Game:onClientDisconnect(id)
 end
+
+-- function ce3d.keyPressed( keycode )
+-- 	print( "Keycode", keycode )
+-- 	if keycode == 19 then
+-- 		EntitySystem:reloadFactory()
+
+-- 		local m = json.decode( file2str("map.json") )
+-- 		EntitySystem:load( m )
+-- 	end
+-- end

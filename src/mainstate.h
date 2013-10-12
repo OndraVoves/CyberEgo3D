@@ -26,48 +26,38 @@
 */
 
 
-#include "../kernel.h"
-#include <OgreSceneNode.h>
-#include <OgreSceneManager.h>
-#include <OgreCamera.h>
-#include <OgreViewport.h>
-#include <OgreRenderWindow.h>
+#ifndef CE3D_LUA_MAINSTATE_H
+#define CE3D_LUA_MAINSTATE_H
 
-using namespace CE3D;
+#include "common/luastate.h"
+#include "common/bytebuffer.h"
 
-extern "C" {
-    void *camera_new ( const char *name, void *scene_node ) {
-        Ogre::SceneNode *node = static_cast<Ogre::SceneNode *> ( scene_node );
+namespace CE3D {
+    namespace Lua {
+        class MainState : public LuaState {
+            public:
+                MainState();
+                virtual ~MainState();
 
-        Kernel::inst().getOGREWIndow()->removeAllViewports();
-        Ogre::Camera *camera = Kernel::inst().getOGRESceneMgr()->createCamera ( name );
+                bool init();
 
-        Ogre::Viewport *vp = Kernel::inst().getOGREWIndow()->addViewport ( camera );
-        camera->setAspectRatio ( Ogre::Real ( vp->getActualWidth() ) / Ogre::Real ( vp->getActualHeight() ) );
+                bool callMain(); // TODO: remove
 
-        node->attachObject ( camera );
+            private:
+                int onUpdateRef;
+                int onNetCallRef;
 
-        return camera;
-    }
+                int onClientConnectRef;
+                int onClientDisonnectRef;
 
-    void camera_del ( void *camera ) {
-        Ogre::Camera *c = static_cast<Ogre::Camera *> ( camera );
-        Kernel::inst().getOGRESceneMgr()->destroyCamera ( c );
-    }
+            public:
+                void onUpdate( int dt );
+                void onNetCall( int type, int ent, const char *cmd, const char *args_format, CE3D::ByteBuffer *args );
 
-
-    void camera_setFar ( void *camera, float far ) {
-        Ogre::Camera *c = static_cast<Ogre::Camera *> ( camera );
-        c->setFarClipDistance ( far );
-    }
-
-    void camera_setNear ( void *camera, float near ) {
-        Ogre::Camera *c = static_cast<Ogre::Camera *> ( camera );
-        c->setNearClipDistance ( near );
-    }
-
-    void camera_setLookAt ( void *camera, float x, float y, float z ) {
-        Ogre::Camera *c = static_cast<Ogre::Camera *> ( camera );
-        c->lookAt ( x, y, z );
+                void onClientConnect( int id );
+                void onClientDisonnect( int id );
+        };
     }
 }
+
+#endif // CE3D_LUA_MAINSTATE_H

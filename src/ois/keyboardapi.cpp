@@ -31,6 +31,19 @@
 
 using namespace CE3D;
 
+extern "C" {
+    bool isKeyDown ( int keycode ) {
+        OIS::Keyboard *kb = Kernel::inst().getOISKeyboard();
+
+        return kb->isKeyDown ( OIS::KeyCode ( keycode ) );
+    }
+
+    bool isModifierDown ( int mod ) {
+        OIS::Keyboard *kb = Kernel::inst().getOISKeyboard();
+
+        return kb-> isModifierDown ( OIS::Keyboard::Modifier ( mod ) );
+    }
+}
 
 static int isKeyDown ( lua_State *L ) {
     OIS::Keyboard *kb = Kernel::inst().getOISKeyboard();

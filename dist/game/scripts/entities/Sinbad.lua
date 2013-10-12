@@ -38,7 +38,7 @@ function Sinbad:onSpawn()
 end
 
 function Sinbad:onUpdate( dt )
-	if CE3D.keyb.isKeyDown( 30 ) then
+	if keyb.isKeyDown( 30 ) then
 		self.play = not self.play
 
 		if self.play then

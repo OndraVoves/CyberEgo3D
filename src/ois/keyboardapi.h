@@ -29,7 +29,7 @@
 #ifndef CE3D_KEYBOARD_H
 #define CE3D_KEYBOARD_H
 
-#include "../luastate.h"
+#include "../common/luastate.h"
 
 namespace CE3D {
     class KeyboardAPI: public CE3D::Lua::LuaLib {
